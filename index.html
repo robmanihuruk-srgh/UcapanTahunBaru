@@ -144,7 +144,7 @@
 </audio>
 
 <div class="share">
-  <button class="btn" id="shareBtn">📤 Bagikan</button>
+  <button class="btn" id="shareBtn" type="button">📤 Bagikan</button>
 </div>
 
 <div class="container">
@@ -216,8 +216,41 @@ nameInput.addEventListener('input', e => {
 // SHARE AMAN
 // =====================
 const shareBtn = document.getElementById('shareBtn');
-shareBtn.addEventListener('click', async () => {
+
+shareBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
+
   const name = nameInput.value.trim();
+  const shareUrl = name
+    ? `${location.origin}${location.pathname}?name=${encodeURIComponent(name)}`
+    : location.href;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: 'Selamat Tahun Baru 2026',
+        text: 'Ucapan Tahun Baru elegan ✨',
+        url: shareUrl
+      });
+    } else if (navigator.clipboard) {
+      await navigator.clipboard.writeText(shareUrl);
+      alert('Link berhasil disalin.');
+    } else {
+      prompt('Salin link berikut:', shareUrl);
+    }
+  } catch (err) {
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('Link berhasil disalin.');
+      } else {
+        prompt('Salin link berikut:', shareUrl);
+      }
+    } catch {
+      prompt('Salin link berikut:', shareUrl);
+    }
+  }
+});
   const shareUrl = name
     ? `${location.origin}${location.pathname}?name=${encodeURIComponent(name)}`
     : location.href;
