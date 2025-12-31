@@ -172,22 +172,16 @@
 // =====================
 // KONFIGURASI TERKUNCI
 // =====================
-const FAMILY_NAME = '';
+// =====================
+// KONFIGURASI
+// =====================
 const VERSE_TEXT = 'Kiranya tahun yang baru membawa damai sejahtera, kasih, dan pengharapan yang melimpah bagi kita semua.';
 
-// =====================
-// TYPEWRITER HALUS
-// =====================
-const verse = document.getElementById('verse');
-let idx = 0;
-(function type(){
-  if(idx < VERSE_TEXT.length){
-    verse.textContent += VERSE_TEXT[idx++];
-    setTimeout(type, 42);
-  }
-})();
-
-document.getElementById('sign').textContent = FAMILY_NAME;
+// Ambil nama dari URL jika ada
+const params = new URLSearchParams(window.location.search);
+const savedName = params.get('name') || '';
+document.getElementById('sign').textContent = savedName;
+document.getElementById('nameInput').value = savedName;
 
 // =====================
 // AUDIO (AMAN)
@@ -223,13 +217,27 @@ nameInput.addEventListener('input', e => {
 // =====================
 const shareBtn = document.getElementById('shareBtn');
 shareBtn.addEventListener('click', async () => {
+  const name = nameInput.value.trim();
+  const shareUrl = name
+    ? `${location.origin}${location.pathname}?name=${encodeURIComponent(name)}`
+    : location.href;
+
   try {
     if (navigator.share && location.protocol === 'https:') {
       await navigator.share({
         title: 'Selamat Tahun Baru 2026',
         text: 'Ucapan Tahun Baru elegan ✨',
-        url: location.href
+        url: shareUrl
       });
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      alert('Link disalin.');
+    }
+  } catch (e) {
+    await navigator.clipboard.writeText(shareUrl);
+    alert('Link disalin.');
+  }
+});
     } else {
       await navigator.clipboard.writeText(location.href);
       alert('Link disalin.');
@@ -243,9 +251,5 @@ shareBtn.addEventListener('click', async () => {
 // =====================
 // TEST CASES
 // =====================
-console.assert(FAMILY_NAME.length > 0, 'Nama keluarga kosong');
 console.assert(VERSE_TEXT.length > 10, 'Teks ucapan terlalu pendek');
-</script>
-
-</body>
-</html>
+console.assert(typeof URLSearchParams !== 'undefined', 'URLSearchParams tidak didukung');
