@@ -2,228 +2,162 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <title>✨ Tahun Baru – Cinematic Elegance</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Ucapan Tahun Baru elegan, sinematik, read-only." />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
+  <title>🎆 Tahun Baru Fantasi Robert Dan Keluarga </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Inter, sans-serif;
-      color: #f5f5f5;
-      background: linear-gradient(180deg, #050b1a, #000);
-      min-height: 100vh;
-      overflow-x: hidden;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top, #091833, #000814);
+      color: #fff;
+      overflow: hidden;
     }
 
-    .ambient {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at top, rgba(255,215,160,.15), transparent 60%);
-      animation: pulse 10s ease-in-out infinite alternate;
-      z-index: 0;
-    }
+    canvas#fireworks { position: fixed; inset: 0; z-index: 0; }
 
-    @keyframes pulse {
-      from { opacity: .6; }
-      to   { opacity: 1; }
-    }
-
-    .container {
-      position: relative;
-      z-index: 1;
+    .hero {
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding: 20px;
+      position: relative;
+      z-index: 2;
     }
 
     .card {
+      max-width: 960px;
       width: 100%;
-      max-width: 820px;
-      background: rgba(255,255,255,.06);
-      border-radius: 28px;
+      background: rgba(255,255,255,0.1);
       backdrop-filter: blur(18px);
-      box-shadow: 0 40px 120px rgba(0,0,0,.8);
+      border-radius: 30px;
       overflow: hidden;
-      animation: fadeUp 1.2s ease forwards;
+      box-shadow: 0 40px 120px rgba(0,0,0,.7);
+      animation: fadeIn 1.6s ease forwards;
     }
 
-    @keyframes fadeUp {
+    @keyframes fadeIn {
       from { opacity: 0; transform: translateY(40px); }
-      to   { opacity: 1; transform: none; }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .photo-wrapper {
-      display: flex;
-      justify-content: center;
-      padding: 22px 0 0;
-    }
+    .photo{ width:100%; aspect-ratio:16/10; overflow:hidden; }
+    .small-photo{ max-height:320px; margin:0 auto; }
+    .photo img{ width:100%; height:100%; object-fit:cover; object-position:center; }
 
-    .photo {
-      width: min(78%, 420px);
-      aspect-ratio: 4 / 5;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,.6);
-    }
+    .content{ padding:32px 26px 40px; text-align:center; }
 
-    .photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    h1{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(30px,7vw,48px);
+      margin:10px 0;
     }
+    h1 span{ color:#ffd166; text-shadow:0 0 18px rgba(255,209,102,.6); }
 
-    .content {
-      padding: 28px 30px 40px;
-      text-align: center;
-    }
+    .verse{ margin-top:18px; font-size:15px; line-height:1.8; max-width:520px; margin:auto; }
+    .signature{ margin-top:22px; font-weight:600; color:#ffd166; }
 
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(30px, 6vw, 48px);
-      margin: 18px 0 8px;
-    }
+    .controls{ position:fixed; top:14px; right:14px; display:flex; gap:10px; z-index:5 }
+    .btn{ background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.25); color:#fff; padding:10px 14px; border-radius:14px; cursor:pointer }
+    .btn:active{ transform:scale(.96) }
 
-    h1 span {
-      color: #ffd48a;
-      text-shadow: 0 0 18px rgba(255,212,138,.7);
-    }
+    .tap{ position:absolute; bottom:16px; width:100%; text-align:center; font-size:12px; opacity:.7 }
 
-    .subtitle {
-      font-size: 15px;
-      opacity: .85;
-      letter-spacing: .3px;
-    }
-
-    .verse {
-      margin: 20px auto 0;
-      max-width: 520px;
-      line-height: 1.8;
-      font-size: 15px;
-      opacity: .95;
-    }
-
-    .signature {
-      margin-top: 22px;
-      font-weight: 600;
-      color: #ffd48a;
-    }
-
-    .share {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      z-index: 5;
-    }
-
-    .btn {
-      padding: 10px 16px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.15);
-      border: 1px solid rgba(255,255,255,.25);
-      color: #fff;
-      cursor: pointer;
-    }
-
-    @media (max-width: 480px) {
-      .photo { width: 85%; }
-      .content { padding: 24px 20px 32px; }
-    }
+    @media (max-width:480px){ .photo{aspect-ratio:4/5; max-height:260px} }
+    @media (min-width:481px) and (max-width:768px){ .photo{aspect-ratio:3/4; max-height:300px} }
+    @media (min-width:769px) and (max-width:1024px){ .photo{aspect-ratio:16/9; max-height:340px} }
+    @media (min-width:1025px){ .photo{aspect-ratio:21/9; max-height:380px} }
   </style>
 </head>
 <body>
 
-<div class="ambient"></div>
-
 <audio id="music" loop>
-  <source src="https://cdn.pixabay.com/audio/2022/11/09/audio_eb7c0c6ef0.mp3" type="audio/mpeg">
+  <source src="https://cdn.pixabay.com/audio/2022/12/06/audio_6e7a8d8b88.mp3" type="audio/mpeg">
 </audio>
 
-<div class="share">
+<canvas id="fireworks"></canvas>
+
+<div class="controls">
   <button class="btn" id="shareBtn">📤 Bagikan</button>
 </div>
 
-<div class="container">
+<section class="hero">
   <div class="card">
-
-    <div class="photo-wrapper">
-      <div class="photo">
-        <img src="faminbali.jfif" alt="Foto Keluarga" />
-      </div>
-    </div>
-
+    <div class="photo small-photo"><img src="faminbali.jfif" alt="Keluarga" /></div>
     <div class="content">
       <h1>Selamat Tahun Baru <span>2026</span></h1>
-      <div class="subtitle">Damai • Harapan • Kasih</div>
       <div class="verse" id="verse"></div>
-      <div class="signature" id="sign"></div>
+      <div class="signature" id="sign">— Keluarga</div>
     </div>
-
   </div>
-</div>
+  <div class="tap">👆 Ketuk layar untuk musik & kembang api</div>
+</section>
 
 <script>
-// =====================
-// KONFIGURASI TERKUNCI
-// =====================
-const FAMILY_NAME = 'Keluarga';
-const VERSE_TEXT = 'Kiranya tahun yang baru membawa damai sejahtera, kasih, dan pengharapan yang melimpah bagi kita semua.';
-
-// =====================
-// TYPEWRITER HALUS
-// =====================
-const verse = document.getElementById('verse');
+// === Typewriter Ayat ===
+const text = "TUHAN memberkati engkau dan melindungi engkau; TUHAN menyinari engkau dengan wajah-Nya dan memberi engkau kasih karunia.";
 let idx = 0;
+const verseEl = document.getElementById('verse');
 (function type(){
-  if(idx < VERSE_TEXT.length){
-    verse.textContent += VERSE_TEXT[idx++];
-    setTimeout(type, 42);
+  if(idx < text.length){
+    verseEl.textContent += text[idx++];
+    setTimeout(type,40);
   }
 })();
 
-document.getElementById('sign').textContent = '— ' + FAMILY_NAME;
-
-// =====================
-// AUDIO (AMAN)
-// =====================
-let started = false;
-document.body.addEventListener('click', () => {
-  if(started) return;
-  started = true;
+// === Music autoplay via user gesture ===
+document.body.addEventListener('click',()=>{
   document.getElementById('music').play().catch(()=>{});
-}, { once:true });
+},{once:true});
 
-// =====================
-// SHARE AMAN
-// =====================
-const shareBtn = document.getElementById('shareBtn');
-shareBtn.addEventListener('click', async () => {
-  try {
-    if (navigator.share && location.protocol === 'https:') {
+// === Fireworks (safe loop) ===
+const canvas = document.getElementById('fireworks');
+const ctx = canvas.getContext('2d');
+function resize(){ canvas.width=innerWidth; canvas.height=innerHeight; }
+window.addEventListener('resize',resize);
+resize();
+setInterval(()=>{
+  const x=Math.random()*canvas.width;
+  const y=Math.random()*canvas.height/2;
+  for(let i=0;i<25;i++){
+    const a=Math.random()*Math.PI*2;
+    const s=Math.random()*4+1;
+    let life=50;
+    const vx=Math.cos(a)*s;
+    const vy=Math.sin(a)*s;
+    const t=setInterval(()=>{
+      ctx.fillStyle='rgba(255,209,102,.8)';
+      ctx.fillRect(x+vx*life,y+vy*life,3,3);
+      if(--life<=0) clearInterval(t);
+    },16);
+  }
+},1000);
+
+// === Locked View (Read-only) ===
+// Nama keluarga dikunci agar penerima tidak bisa mengedit
+const FAMILY_NAME = 'Keluarga';
+document.getElementById('sign').innerText = '— ' + FAMILY_NAME;
+
+// === SAFE SHARE (fix NotAllowedError) ===
+document.getElementById('shareBtn').addEventListener('click', async () => {
+  try{
+    if(navigator.share && location.protocol === 'https:'){
       await navigator.share({
-        title: 'Selamat Tahun Baru 2026',
-        text: 'Ucapan Tahun Baru elegan ✨',
+        title:'Selamat Tahun Baru 2026',
+        text:'Ucapan Tahun Baru interaktif ✨',
         url: location.href
       });
     } else {
       await navigator.clipboard.writeText(location.href);
-      alert('Link disalin.');
+      alert('Link disalin. Bagikan ke WhatsApp atau media lain.');
     }
-  } catch (e) {
+  } catch(err){
     await navigator.clipboard.writeText(location.href);
-    alert('Link disalin.');
+    alert('Izin berbagi diblokir. Link telah disalin.');
   }
 });
-
-// =====================
-// TEST CASES
-// =====================
-console.assert(FAMILY_NAME.length > 0, 'Nama keluarga kosong');
-console.assert(VERSE_TEXT.length > 10, 'Teks ucapan terlalu pendek');
 </script>
 
 </body>
