@@ -2,155 +2,46 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <title>👑 Tahun Baru – ULTIMATE MODE</title>
+  <title>🌌 Tahun Baru – ASCENDED MODE</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Ucapan Tahun Baru sinematik – ULTIMATE MODE (Locked, Share-Only, Image Ready)." />
+  <meta name="description" content="Ucapan Tahun Baru sinematik – ASCENDED MODE (Locked, Share, Export Image, PWA-ready)." />
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
+  <!-- PWA Meta -->
+  <meta name="theme-color" content="#0a1538" />
+
   <style>
-    * { box-sizing: border-box }
-    body {
-      margin: 0;
-      font-family: Inter, sans-serif;
-      color: #f6f6f6;
-      background: radial-gradient(circle at top, #0a1538, #000);
-      min-height: 100vh;
-      overflow-x: hidden;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,sans-serif;
+      color:#f6f6f6;
+      background:radial-gradient(circle at top,#0a1538,#000);
+      min-height:100vh;overflow-x:hidden
     }
-
-    canvas#fx { position: fixed; inset: 0; z-index: 0 }
-
-    .container {
-      position: relative; z-index: 1;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 860px;
-      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
-      border-radius: 34px;
-      backdrop-filter: blur(26px);
-      box-shadow: 0 60px 180px rgba(0,0,0,.95);
-      overflow: hidden;
-      animation: enter 1.4s ease forwards;
-    }
-
-    @keyframes enter {
-      from { opacity:0; transform: translateY(60px) scale(.96) }
-      to   { opacity:1; transform: none }
-    }
-
-    .photo-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 28px;
-    }
-
-    .photo {
-      width: min(78%, 380px);
-      aspect-ratio: 4 / 5;
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 30px 90px rgba(0,0,0,.75);
-      background: #111;
-    }
-
-    .photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .content {
-      padding: 32px 36px 48px;
-      text-align: center;
-    }
-
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(32px, 6vw, 56px);
-      margin: 18px 0 6px;
-    }
-
-    h1 span {
-      color: #ffd88a;
-      text-shadow: 0 0 26px rgba(255,216,138,.9);
-    }
-
-    .subtitle {
-      font-size: 15px;
-      opacity: .85;
-      letter-spacing: .3px;
-    }
-
-    .verse {
-      margin: 26px auto 0;
-      max-width: 560px;
-      line-height: 1.9;
-      font-size: 15px;
-      opacity: .95;
-    }
-
-    .signature {
-      margin-top: 30px;
-      font-weight: 600;
-      font-size: 16px;
-      color: #ffd88a;
-      text-shadow: 0 0 16px rgba(255,216,138,.6);
-    }
-
-    .editor {
-      margin-top: 20px;
-    }
-
-    .editor input {
-      padding: 10px 16px;
-      border-radius: 14px;
-      border: none;
-      width: 82%;
-      max-width: 360px;
-      font-size: 14px;
-    }
-
-    .editor input:focus { outline: none }
-
-    .share {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      z-index: 10;
-    }
-
-    .btn {
-      padding: 12px 20px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.35);
-      color: #fff;
-      cursor: pointer;
-      font-size: 14px;
-      backdrop-filter: blur(10px);
-    }
-
-    .btn:active { transform: scale(.96) }
-
-    .locked .editor,
-    .locked #photoInput {
-      display: none;
-    }
-
-    @media (max-width: 480px) {
-      .photo { width: 88% }
-      .content { padding: 26px 22px 40px }
-    }
+    canvas#fx{position:fixed;inset:0;z-index:0}
+    .container{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .card{width:100%;max-width:880px;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.03));border-radius:36px;backdrop-filter:blur(28px);box-shadow:0 70px 200px rgba(0,0,0,.95);overflow:hidden;animation:enter 1.6s ease forwards}
+    @keyframes enter{from{opacity:0;transform:translateY(70px) scale(.95)}to{opacity:1;transform:none}}
+    .photo-wrapper{display:flex;flex-direction:column;align-items:center;padding-top:30px}
+    .photo{width:min(80%,380px);aspect-ratio:4/5;border-radius:26px;overflow:hidden;box-shadow:0 35px 100px rgba(0,0,0,.8);background:#111}
+    .photo img{width:100%;height:100%;object-fit:cover}
+    .content{padding:34px 38px 52px;text-align:center}
+    h1{font-family:'Playfair Display',serif;font-size:clamp(34px,6vw,60px);margin:20px 0 6px}
+    h1 span{color:#ffd88a;text-shadow:0 0 30px rgba(255,216,138,1)}
+    .subtitle{font-size:15px;opacity:.9;letter-spacing:.4px}
+    .verse{margin:28px auto 0;max-width:580px;line-height:1.95;font-size:15px}
+    .signature{margin-top:34px;font-weight:600;font-size:17px;color:#ffd88a;text-shadow:0 0 18px rgba(255,216,138,.7)}
+    .editor{margin-top:22px}
+    .editor input{padding:11px 18px;border-radius:16px;border:none;width:84%;max-width:380px;font-size:14px}
+    .editor input:focus{outline:none}
+    .share{position:fixed;top:16px;right:16px;z-index:10;display:flex;gap:8px}
+    .btn{padding:12px 22px;border-radius:20px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;cursor:pointer;font-size:14px;backdrop-filter:blur(12px)}
+    .btn:active{transform:scale(.95)}
+    .locked .editor,.locked #photoInput{display:none}
+    @media(max-width:480px){.photo{width:90%}.content{padding:28px 22px 44px}}
   </style>
 </head>
 <body>
@@ -162,98 +53,64 @@
 </audio>
 
 <div class="share">
-  <button class="btn" id="shareBtn" type="button">📤 Bagikan</button>
+  <button class="btn" id="shareBtn">📤 Bagikan</button>
+  <button class="btn" id="imgBtn">🖼️ Simpan Gambar</button>
 </div>
 
 <div class="container" id="app">
   <div class="card" id="capture">
-
     <div class="photo-wrapper">
-      <div class="photo">
-        <img id="photoPreview" src="faminbali.jfif" alt="Foto" />
-      </div>
+      <div class="photo"><img id="photoPreview" src="faminbali.jfif" /></div>
       <input type="file" id="photoInput" accept="image/*" style="margin-top:14px;color:#ccc" />
     </div>
-
     <div class="content">
       <h1>Selamat Tahun Baru <span>2026</span></h1>
       <div class="subtitle">Damai • Terang • Harapan</div>
       <div class="verse" id="verse"></div>
       <div class="signature" id="sign"></div>
-      <div class="editor">
-        <input type="text" id="nameInput" placeholder="Nama keluarga" />
-      </div>
+      <div class="editor"><input id="nameInput" placeholder="Nama keluarga" /></div>
     </div>
-
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
-// ================= PARTICLE FX =================
-const c=document.getElementById('fx'),ctx=c.getContext('2d');
-let w,h,pts=[];
-function resize(){ w=c.width=innerWidth; h=c.height=innerHeight }
-resize(); addEventListener('resize',resize);
-for(let i=0;i<140;i++) pts.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.6,s:Math.random()+0.3});
-(function loop(){ ctx.clearRect(0,0,w,h); pts.forEach(p=>{ p.y+=p.s; if(p.y>h)p.y=0; ctx.fillStyle='rgba(255,215,140,.75)'; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill() }); requestAnimationFrame(loop) })();
+// PARTICLES
+const c=document.getElementById('fx'),x=c.getContext('2d');let w,h,p=[];
+function rs(){w=c.width=innerWidth;h=c.height=innerHeight}rs();addEventListener('resize',rs);
+for(let i=0;i<160;i++)p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.5,s:Math.random()+0.4});
+(function a(){x.clearRect(0,0,w,h);p.forEach(o=>{o.y+=o.s;o.y%=h;x.fillStyle='rgba(255,215,140,.75)';x.beginPath();x.arc(o.x,o.y,o.r,0,7);x.fill()});requestAnimationFrame(a)})();
 
-// ================= DATA =================
+// DATA
 const TEXT='Kiranya terang ilahi menyertai setiap langkah kita di tahun yang baru.';
-const verseEl=document.getElementById('verse');
-const sign=document.getElementById('sign');
-const nameInput=document.getElementById('nameInput');
-const photoInput=document.getElementById('photoInput');
-const photoPreview=document.getElementById('photoPreview');
-const app=document.getElementById('app');
+const verse=document.getElementById('verse'),sign=document.getElementById('sign');
+const nameInput=document.getElementById('nameInput'),photoInput=document.getElementById('photoInput'),photoPreview=document.getElementById('photoPreview'),app=document.getElementById('app');
 
-// TYPE EFFECT
-let i=0; (function type(){ if(i<TEXT.length){ verseEl.textContent+=TEXT[i++]; setTimeout(type,40) } })();
+let i=0;(function t(){if(i<TEXT.length){verse.textContent+=TEXT[i++];setTimeout(t,38)}})();
 
-// MODE DETECT
-const params=new URLSearchParams(location.search);
-const lockedName=params.get('name');
+const q=new URLSearchParams(location.search);const lockName=q.get('name');
+if(lockName){sign.textContent=lockName;nameInput.value=lockName;app.classList.add('locked')}
 
-if(lockedName){
-  sign.textContent=lockedName;
-  nameInput.value=lockedName;
-  app.classList.add('locked');
-}
+let played=false;document.body.addEventListener('click',()=>{if(played)return;played=true;music.play().catch(()=>{})},{once:true});
+nameInput.addEventListener('input',()=>sign.textContent=nameInput.value);
+photoInput.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=v=>photoPreview.src=v.target.result;r.readAsDataURL(f)});
 
-// AUDIO SAFE
-let played=false;
-document.body.addEventListener('click',()=>{
-  if(played) return;
-  played=true;
-  document.getElementById('music').play().catch(()=>{});
-},{once:true});
-
-// EDIT MODE
-nameInput.addEventListener('input',()=> sign.textContent=nameInput.value);
-photoInput.addEventListener('change',e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=ev=> photoPreview.src=ev.target.result;
-  r.readAsDataURL(f);
-});
-
-// SHARE (ULTIMATE STABLE)
+// SHARE
 document.getElementById('shareBtn').onclick=()=>{
-  const v=nameInput.value.trim();
-  if(!v){ alert('Isi nama dulu'); return }
+  const v=nameInput.value.trim();if(!v){alert('Isi nama dulu');return}
   const url=`${location.origin}${location.pathname}?name=${encodeURIComponent(v)}`;
-  if(navigator.share){
-    navigator.share({ title:'Tahun Baru 2026', text:'Ucapan Tahun Baru ✨', url }).catch(()=>{});
-    return;
-  }
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(url).then(()=> alert('Link berhasil disalin'))
-      .catch(()=> prompt('Salin link:', url));
-  } else {
-    prompt('Salin link:', url);
-  }
+  if(navigator.share){navigator.share({title:'Tahun Baru 2026',text:'Ucapan Tahun Baru ✨',url}).catch(()=>{});return}
+  navigator.clipboard?.writeText(url).then(()=>alert('Link disalin')).catch(()=>prompt('Salin link:',url));
 };
 
-console.assert(true,'ULTIMATE MODE READY');
+// EXPORT IMAGE
+document.getElementById('imgBtn').onclick=()=>{
+  html2canvas(document.getElementById('capture'),{backgroundColor:null,scale:2}).then(c=>{
+    const a=document.createElement('a');a.download='Tahun-Baru-2026.png';a.href=c.toDataURL('image/png');a.click();
+  });
+};
+
+console.assert(true,'ASCENDED MODE READY');
 </script>
 </body>
 </html>
