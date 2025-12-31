@@ -152,8 +152,9 @@
 
     <div class="photo-wrapper">
       <div class="photo">
-        <img src="faminbali.jfif" alt="Foto Keluarga" />
+        <img id="photoPreview" src="faminbali.jfif" alt="Foto" />
       </div>
+      <input type="file" id="photoInput" accept="image/*" style="margin-top:12px;color:#ccc" />
     </div>
 
     <div class="content">
@@ -161,6 +162,7 @@
       <div class="subtitle">Damai • Harapan • Kasih</div>
       <div class="verse" id="verse"></div>
       <div class="signature" id="sign"></div>
+      <input type="text" id="nameInput" placeholder="Tulis nama (contoh: Keluarga Manihuruk)" style="margin-top:10px;padding:8px 12px;border-radius:10px;border:none;width:80%;max-width:320px" />
     </div>
 
   </div>
@@ -170,7 +172,7 @@
 // =====================
 // KONFIGURASI TERKUNCI
 // =====================
-const FAMILY_NAME = 'Keluarga';
+const FAMILY_NAME = '';
 const VERSE_TEXT = 'Kiranya tahun yang baru membawa damai sejahtera, kasih, dan pengharapan yang melimpah bagi kita semua.';
 
 // =====================
@@ -185,7 +187,7 @@ let idx = 0;
   }
 })();
 
-document.getElementById('sign').textContent = '— ' + FAMILY_NAME;
+document.getElementById('sign').textContent = FAMILY_NAME;
 
 // =====================
 // AUDIO (AMAN)
@@ -196,6 +198,25 @@ document.body.addEventListener('click', () => {
   started = true;
   document.getElementById('music').play().catch(()=>{});
 }, { once:true });
+
+// =====================
+// GANTI FOTO & NAMA (CLIENT SIDE)
+// =====================
+const photoInput = document.getElementById('photoInput');
+const photoPreview = document.getElementById('photoPreview');
+const nameInput = document.getElementById('nameInput');
+
+photoInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => photoPreview.src = ev.target.result;
+  reader.readAsDataURL(file);
+});
+
+nameInput.addEventListener('input', e => {
+  document.getElementById('sign').textContent = e.target.value;
+});
 
 // =====================
 // SHARE AMAN
@@ -222,7 +243,7 @@ shareBtn.addEventListener('click', async () => {
 // =====================
 // TEST CASES
 // =====================
-console.assert(FAMILY_NAME.length > 0, 'Robert & Keluarga');
+console.assert(FAMILY_NAME.length > 0, 'Nama keluarga kosong');
 console.assert(VERSE_TEXT.length > 10, 'Teks ucapan terlalu pendek');
 </script>
 
