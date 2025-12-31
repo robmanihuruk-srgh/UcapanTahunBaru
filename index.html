@@ -213,7 +213,7 @@ nameInput.addEventListener('input', e => {
 });
 
 // =====================
-// SHARE AMAN
+// SHARE AMAN (FIX TOTAL)
 // =====================
 const shareBtn = document.getElementById('shareBtn');
 
@@ -225,59 +225,31 @@ shareBtn.addEventListener('click', async (e) => {
     ? `${location.origin}${location.pathname}?name=${encodeURIComponent(name)}`
     : location.href;
 
-  try {
-    if (navigator.share) {
-      await navigator.share({
-        title: 'Selamat Tahun Baru 2026',
-        text: 'Ucapan Tahun Baru elegan ✨',
-        url: shareUrl
-      });
-    } else if (navigator.clipboard) {
-      await navigator.clipboard.writeText(shareUrl);
-      alert('Link berhasil disalin.');
-    } else {
-      prompt('Salin link berikut:', shareUrl);
-    }
-  } catch (err) {
+  // Mobile modern (Android / iOS Safari)
+  if (navigator.share) {
     try {
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(shareUrl);
-        alert('Link berhasil disalin.');
-      } else {
-        prompt('Salin link berikut:', shareUrl);
-      }
-    } catch {
-      prompt('Salin link berikut:', shareUrl);
-    }
-  }
-});
-  const shareUrl = name
-    ? `${location.origin}${location.pathname}?name=${encodeURIComponent(name)}`
-    : location.href;
-
-  try {
-    if (navigator.share && location.protocol === 'https:') {
       await navigator.share({
         title: 'Selamat Tahun Baru 2026',
         text: 'Ucapan Tahun Baru elegan ✨',
         url: shareUrl
       });
-    } else {
-      await navigator.clipboard.writeText(shareUrl);
-      alert('Link disalin.');
+      return;
+    } catch (err) {
+      // lanjut ke fallback
     }
-  } catch (e) {
-    await navigator.clipboard.writeText(shareUrl);
-    alert('Link disalin.');
   }
-});
-    } else {
-      await navigator.clipboard.writeText(location.href);
-      alert('Link disalin.');
-    }
-  } catch (e) {
-    await navigator.clipboard.writeText(location.href);
-    alert('Link disalin.');
+
+  // Desktop & fallback universal
+  try {
+    const tempInput = document.createElement('input');
+    tempInput.value = shareUrl;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+    alert('Link berhasil disalin.');
+  } catch (err) {
+    prompt('Salin link berikut:', shareUrl);
   }
 });
 
