@@ -125,7 +125,7 @@ nameInput.addEventListener('input',()=>{
   nameDisplay.textContent=nameInput.value ? 'Keluarga '+nameInput.value : '';
 });
 
-// ===== MUSIC SAFE MODE (AUTO AFTER ANY CLICK) =====
+// ===== MUSIC SAFE MODE (FIXED & STABLE) =====
 const music=document.getElementById('bgMusic');
 const musicBtn=document.getElementById('musicBtn');
 let musicOn=false;
@@ -136,17 +136,16 @@ music.addEventListener('error',()=>{
 });
 
 function startMusic(){
-  if(musicOn) return;
   music.volume=0.5;
   music.play().then(()=>{
     musicOn=true;
     musicBtn.textContent='⏸️ Musik';
   }).catch(err=>{
-    console.warn('Music blocked until interaction');
+    console.warn('Music blocked:',err);
   });
 }
 
-// Auto start after first interaction anywhere
+// first interaction unlock
 ['click','touchstart','keydown'].forEach(evt=>{
   document.addEventListener(evt,()=>{
     if(!userInteracted){
@@ -156,41 +155,40 @@ function startMusic(){
   },{once:true});
 });
 
-// Manual toggle still works
 musicBtn.addEventListener('click',e=>{
   e.stopPropagation();
-  if(!musicOn){ startMusic(); }
-  else{ music.pause(); musicOn=false; musicBtn.textContent='🎶 Musik'; }
-});
-      console.error(err);
-    });
+  if(!musicOn){
+    startMusic();
   }else{
-    music.pause(); musicOn=false; musicBtn.textContent='🎶 Musik';
+    music.pause();
+    musicOn=false;
+    musicBtn.textContent='🎶 Musik';
   }
 });
 
-// ===== SHARE + QR =====
-function genQR(url){
-  qrBox.innerHTML='';
-  QRCode.toCanvas(url,{width:160,color:{dark:'#ffd88a',light:'transparent'}},(e,c)=>{ if(!e) qrBox.appendChild(c); });
-}
-
-document.getElementById('shareBtn').addEventListener('click',()=>{
-  const v=nameInput.value.trim(); if(!v){alert('Isi nama dulu');return}
+// ===== SHARE =====
+const shareBtn=document.getElementById('shareBtn');
+shareBtn.addEventListener('click',()=>{
+  const v=nameInput.value.trim();
+  if(!v){alert('Isi nama dulu');return}
   const url=`${location.origin}${location.pathname}?name=${encodeURIComponent(v)}`;
   genQR(url);
-  if(navigator.share){navigator.share({title:'Tahun Baru 2026',url}).catch(()=>{});}
-  else{navigator.clipboard.writeText(url).then(()=>alert('Link disalin'));}
+  if(navigator.share){
+    navigator.share({title:'Tahun Baru 2026',url}).catch(()=>{});
+  }else{
+    navigator.clipboard.writeText(url).then(()=>alert('Link disalin'));
+  }
 });
 
 // ===== SAVE IMAGE =====
-document.getElementById('saveBtn').addEventListener('click',()=>{
-  html2canvas(document.getElementById('capture'),{scale:2}).then(cvs=>{
+const saveBtn=document.getElementById('saveBtn');
+saveBtn.addEventListener('click',()=>{
+  html2canvas(document.getElementById('capture'),{scale:2,useCORS:true}).then(cvs=>{
     const a=document.createElement('a');
     a.download='tahun-baru-2026.png';
     a.href=cvs.toDataURL('image/png');
     a.click();
-  });
+  }).catch(err=>alert('Gagal menyimpan gambar'));
 });
 
 // ===== BASIC TESTS =====
