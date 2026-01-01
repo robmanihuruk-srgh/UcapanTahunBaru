@@ -59,10 +59,10 @@
     }
 
     .content { padding: 20px 32px 42px; text-align:center }
-    h1 { font-family:'Playfair Display',serif; font-size:clamp(28px,5vw,48px); margin:18px 0 6px; letter-spacing: 1px; }
-    h1 span { color:#ffd88a; text-shadow:0 0 22px rgba(255,216,138,.8) }
+    h1 { font-family:'Playfair Display',serif; font-size:clamp(24px,5vw,42px); margin:18px 0 6px; letter-spacing: 1px; line-height: 1.2; }
+    h1 span { color:#ffd88a; text-shadow:0 0 22px rgba(255,216,138,.8); display: block; font-size: 1.2em; }
     
-    .subtitle { font-size:15px; opacity:.85; letter-spacing: 2px; text-transform: uppercase; }
+    .subtitle { font-size:13px; opacity:.85; letter-spacing: 2px; text-transform: uppercase; }
     .verse { margin:22px auto 0; min-height: 80px; max-width:520px; line-height:1.9; font-size:16px; font-style: italic; color: #e0e0e0; }
     .signature { margin-top:26px; font-weight:600; color:#ffd88a; font-size: 1.3em; }
 
@@ -92,7 +92,7 @@
       backdrop-filter: blur(10px);
       transition: all 0.3s ease;
       font-weight: 600;
-      display: none; /* Hidden by default, toggled via JS */
+      display: none;
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
     .btn:hover { background: rgba(255,216,138,0.4); transform: translateY(-2px); }
@@ -115,8 +115,8 @@
 </audio>
 
 <div class="top-action">
-  <button class="btn" id="shareBtn" style="display: none;">📤 Bagikan Kartu</button>
-  <button class="btn" id="playBtn" style="display: none;">🎵 Tekan Disini Untuk Musik</button>
+  <button class="btn" id="shareBtn">📤 Bagikan Kartu</button>
+  <button class="btn" id="playBtn">🎵 Tekan Disini Untuk Musik</button>
 </div>
 
 <div class="container" id="app">
@@ -129,7 +129,7 @@
     </div>
 
     <div class="content">
-      <h1>SELAMAT TAHUN BARU<span>2026</span></h1>
+      <h1>SELAMAT TAHUN BARU <span>2026</span></h1>
       <div class="subtitle">Damai • Sukacita • Berkat</div>
       
       <div class="verse" id="verse"></div>
@@ -165,16 +165,20 @@ const LIST_UCAPAN = [
 const q=new URLSearchParams(location.search); 
 const nameParam=q.get('name');
 const quoteIdx=q.get('v'); 
+const imgData=q.get('img'); // Data gambar dari URL
+
 const app=document.getElementById('app');
 const signEl=document.getElementById('sign');
 const verseEl=document.getElementById('verse');
 const nameInput=document.getElementById('nameInput');
 const photoInput=document.getElementById('photoInput');
+const photoPreview=document.getElementById('photoPreview');
 const shareBtn=document.getElementById('shareBtn');
 const playBtn=document.getElementById('playBtn');
 const music = document.getElementById('music');
 
 let currentQuoteIndex = quoteIdx ? parseInt(quoteIdx) : 0;
+let compressedImg = ""; // Variabel penyimpan teks gambar
 let typingTimer;
 
 function typeWriter(text, i = 0) {
@@ -185,30 +189,27 @@ function typeWriter(text, i = 0) {
   }
 }
 
-// Logic Tampilan Berdasarkan Mode (Editor vs Receiver)
+// Logic Tampilan
 if(nameParam) {
-    // MODE PENERIMA (LINK HASIL SHARING)
     app.classList.add('locked');
     signEl.textContent = nameParam;
-    playBtn.style.display = 'block'; // Munculkan tombol Musik
-    shareBtn.style.display = 'none';  // Pastikan tombol Share sembunyi
+    playBtn.style.display = 'block';
+    shareBtn.style.display = 'none';
+    // Jika ada data gambar di URL, tampilkan
+    if(imgData) photoPreview.src = decodeURIComponent(imgData);
 } else {
-    // MODE EDITOR (PEMBUAT KARTU)
-    shareBtn.style.display = 'block'; // Munculkan tombol Bagikan
-    playBtn.style.display = 'none';   // Sembunyikan tombol Musik
+    shareBtn.style.display = 'block';
+    playBtn.style.display = 'none';
 }
 
 typeWriter(LIST_UCAPAN[currentQuoteIndex]);
 
-// Event: Play Music
 playBtn.onclick = () => {
     music.play().catch(e => console.log("Audio play failed"));
     playBtn.innerHTML = "🎵 Musik Aktif";
-    playBtn.style.opacity = "0.7";
-    setTimeout(() => { playBtn.style.display = 'none'; }, 2000); // Sembunyi setelah 2 detik agar layar bersih
+    setTimeout(() => { playBtn.style.display = 'none'; }, 2000);
 };
 
-// Event: Random Quote
 document.getElementById('randomBtn').onclick = () => {
   let newIdx;
   do { newIdx = Math.floor(Math.random() * LIST_UCAPAN.length); } while (newIdx === currentQuoteIndex);
@@ -219,24 +220,54 @@ document.getElementById('randomBtn').onclick = () => {
 
 nameInput.addEventListener('input',()=>signEl.textContent=nameInput.value);
 
-photoInput.addEventListener('change',e=>{
-  const f=e.target.files[0]; if(!f)return;
-  const r=new FileReader(); r.onload=v=>document.getElementById('photoPreview').src=v.target.result; r.readAsDataURL(f);
+// --- KOMPRESI GAMBAR AGAR BISA MASUK URL ---
+photoInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const MAX_WIDTH = 400; // Perkecil ukuran foto agar URL tidak terlalu panjang
+      const scaleSize = MAX_WIDTH / img.width;
+      canvas.width = MAX_WIDTH;
+      canvas.height = img.height * scaleSize;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Ubah ke format JPEG dengan kualitas rendah (0.5) untuk efisiensi link
+      compressedImg = canvas.toDataURL('image/jpeg', 0.5);
+      photoPreview.src = compressedImg;
+    }
+    img.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
 });
 
-// Event: Bagikan
 shareBtn.onclick=()=>{
   const nameVal = nameInput.value.trim(); 
   if(!nameVal){alert('Silakan isi nama pengirim terlebih dahulu');return}
-  const url=`${location.origin}${location.pathname}?name=${encodeURIComponent(nameVal)}&v=${currentQuoteIndex}`;
   
+  // Masukkan data gambar ke URL
+  let url = `${location.origin}${location.pathname}?name=${encodeURIComponent(nameVal)}&v=${currentQuoteIndex}`;
+  if(compressedImg) {
+    url += `&img=${encodeURIComponent(compressedImg)}`;
+  }
+  
+  if(url.length > 8000) {
+      alert("Maaf, ukuran foto terlalu besar. Gunakan foto lain atau perkecil resolusinya.");
+      return;
+  }
+
   if(navigator.share){
     navigator.share({title: 'Kartu Ucapan Digital 2026', text: `Dari ${nameVal} untuk Anda ✨`, url: url});
   } else {
-    navigator.clipboard?.writeText(url).then(()=>alert('Link kartu telah disalin! Silakan kirim ke WhatsApp.'));
+    navigator.clipboard?.writeText(url).then(()=>alert('Link kartu telah disalin!'));
   }
 };
 </script>
 </body>
 </html>
-
