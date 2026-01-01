@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>🌌 Tahun Baru 2026 – GKPS Tangerang</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Ucapan Tahun Baru sinematik – St. Robert Manihuruk." />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
@@ -35,7 +34,6 @@
     }
     @keyframes rise { from {opacity:0; transform:translateY(50px)} to {opacity:1; transform:none} }
 
-    /* MODIFIKASI FOTO AGAR ADJUSTABLE */
     .photo-wrapper { 
       display:flex; 
       flex-direction:column; 
@@ -44,7 +42,7 @@
     }
     .photo {
       width: 100%;
-      max-height: 450px; /* Batas tinggi maksimal agar tidak scroll berlebih */
+      max-height: 450px;
       border-radius: 22px;
       overflow: hidden;
       box-shadow: 0 25px 80px rgba(0,0,0,.7);
@@ -57,14 +55,14 @@
       max-height: 450px; 
       height: auto; 
       width: auto; 
-      object-fit: contain; /* Memastikan foto utuh, tidak terpotong */
+      object-fit: contain; 
     }
 
     .content { padding: 20px 32px 42px; text-align:center }
     h1 { font-family:'Playfair Display',serif; font-size:clamp(30px,6vw,52px); margin:18px 0 6px }
     h1 span { color:#ffd88a; text-shadow:0 0 22px rgba(255,216,138,.8) }
     .subtitle { font-size:15px; opacity:.85; letter-spacing: 2px; }
-    .verse { margin:22px auto 0; max-width:520px; line-height:1.9; font-size:16px; font-style: italic; }
+    .verse { margin:22px auto 0; min-height: 80px; max-width:520px; line-height:1.9; font-size:16px; font-style: italic; color: #e0e0e0; }
     .signature { margin-top:26px; font-weight:600; color:#ffd88a; font-size: 1.2em; }
 
     .editor { margin-top:20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
@@ -76,10 +74,24 @@
       max-width:340px; 
       background: rgba(255,255,255,0.1);
       color: #fff;
+      margin-bottom: 10px;
     }
 
+    .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    
     .share { position:fixed; top:16px; right:16px; z-index:5 }
-    .btn { padding:10px 18px; border-radius:16px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.3); color:#fff; cursor:pointer; backdrop-filter: blur(5px); }
+    .btn { 
+      padding:10px 18px; 
+      border-radius:16px; 
+      background:rgba(255,255,255,.18); 
+      border:1px solid rgba(255,255,255,.3); 
+      color:#fff; 
+      cursor:pointer; 
+      backdrop-filter: blur(5px);
+      transition: 0.3s;
+    }
+    .btn:hover { background: rgba(255,255,255,0.3); }
+    .btn-secondary { background: rgba(255, 216, 138, 0.2); border-color: #ffd88a; color: #ffd88a; }
 
     .locked .editor, .locked #photoInput { display:none }
 
@@ -95,16 +107,14 @@
 
 <audio id="music" loop>
   <source src="Music_NewYear.mp4" type="audio/mp4">
-  Browser Anda tidak mendukung pemutaran audio.
 </audio>
 
 <div class="share">
-  <button class="btn" id="shareBtn" type="button">📤 Bagikan Ucapan</button>
+  <button class="btn" id="shareBtn" type="button">📤 Bagikan</button>
 </div>
 
 <div class="container" id="app">
   <div class="card">
-
     <div class="photo-wrapper">
       <div class="photo">
         <img id="photoPreview" src="faminbali.jfif" alt="Foto Keluarga" />
@@ -119,74 +129,89 @@
       <div class="signature" id="sign"></div>
       
       <div class="editor">
-        <p style="font-size: 13px; opacity: 0.7;">Edit Nama Pengirim:</p>
-        <input type="text" id="nameInput" placeholder="Contoh: Robert dan Keluarga" />
+        <input type="text" id="nameInput" placeholder="Nama Keluarga / Pengirim" />
+        <div class="btn-group">
+            <button class="btn btn-secondary" id="randomBtn">✨ Acak Ucapan</button>
+        </div>
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
-// =====================
-// PARTICLE FX
-// =====================
+// --- Particle FX ---
 const c=document.getElementById('fx'),x=c.getContext('2d'); let w,h,p=[];
 function rs(){w=c.width=innerWidth;h=c.height=innerHeight} rs(); addEventListener('resize',rs);
 for(let i=0;i<120;i++)p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.5,s:Math.random()+0.2});
 (function a(){x.clearRect(0,0,w,h);p.forEach(o=>{o.y+=o.s;o.y%=h;x.fillStyle='rgba(255,215,140,.7)';x.beginPath();x.arc(o.x,o.y,o.r,0,7);x.fill()});requestAnimationFrame(a)})();
 
-// =====================
-// DATA & LOGIC
-// =====================
-const TEXT='“Segala Impian dan Harapan Terwujud, Diberikan Kesehatan, Kebahagiaan, dan Rezeki yang Mengalir Deras.”';
-const q=new URLSearchParams(location.search); const n=q.get('name');
-const app=document.getElementById('app'), sign=document.getElementById('sign');
+// --- Quotes Data ---
+const LIST_UCAPAN = [
+  "“Segala Impian dan Harapan Terwujud, Diberikan Kesehatan, Kebahagiaan, dan Rezeki yang Mengalir Deras.”",
+  "“Kiranya terang Ilahi menyertai setiap langkah kita di tahun yang baru, membawa damai sejahtera bagi kita semua.”",
+  "“Selamat tinggal 2025, selamat datang 2026. Semoga kasih Tuhan selalu menyertai perjalanan keluarga kita.”",
+  "“Tahun baru adalah lembaran bersih untuk menuliskan cerita indah dalam iman dan pengharapan baru.”",
+  "“Berjalanlah dengan iman di tahun 2026. Kiranya berkat Tuhan melimpah atas rumah tangga dan pekerjaan kita.”",
+  "“Semoga di tahun 2026 ini, setiap doa-doa kita dijawab dengan cara Tuhan yang paling indah.”"
+];
+
+// --- Core Logic ---
+const q=new URLSearchParams(location.search); 
+const n=q.get('name');
+const vIdx=q.get('v'); // Parameter untuk menyimpan indeks ucapan
+const app=document.getElementById('app'), sign=document.getElementById('sign'), verseEl=document.getElementById('verse');
 const nameInput=document.getElementById('nameInput'), photoInput=document.getElementById('photoInput'), photoPreview=document.getElementById('photoPreview');
 const music = document.getElementById('music');
 
-// TYPE EFFECT
-let i=0; 
-function typeWriter(){ 
-  if(i<TEXT.length){ 
-    document.getElementById('verse').textContent+=TEXT[i++]; 
-    setTimeout(typeWriter, 45);
-  } 
-}
-typeWriter();
+let currentQuoteIndex = vIdx ? parseInt(vIdx) : 0;
+let typingTimer;
 
+function typeWriter(text, i = 0) {
+  if (i === 0) verseEl.textContent = '';
+  if (i < text.length) {
+    verseEl.textContent += text[i];
+    typingTimer = setTimeout(() => typeWriter(text, i + 1), 40);
+  }
+}
+
+function updateVerse(index) {
+  clearTimeout(typingTimer);
+  currentQuoteIndex = index;
+  typeWriter(LIST_UCAPAN[index]);
+}
+
+// Initial Load
 if(n){ 
   sign.textContent = n; 
   nameInput.value = n; 
   app.classList.add('locked'); 
 }
+updateVerse(currentQuoteIndex);
 
-// AUDIO AUTO-PLAY ON INTERACTION
-document.body.addEventListener('click',()=>{ 
-  if(music.paused){
-    music.play().catch(e => console.log("Playback blocked atau file tidak ditemukan"));
-  }
-},{once:false});
+// Buttons
+document.getElementById('randomBtn').onclick = () => {
+  let newIdx;
+  do { newIdx = Math.floor(Math.random() * LIST_UCAPAN.length); } while (newIdx === currentQuoteIndex);
+  updateVerse(newIdx);
+};
 
-// EDIT MODE LOGIC
+document.body.addEventListener('click',()=>{ if(music.paused) music.play().catch(()=>{}); },{once:false});
+
 nameInput.addEventListener('input',()=>sign.textContent=nameInput.value);
-photoInput.addEventListener('change',e=>{ 
-  const f=e.target.files[0]; 
-  if(!f)return; 
-  const r=new FileReader(); 
-  r.onload=v=>photoPreview.src=v.target.result; 
-  r.readAsDataURL(f) 
+
+photoInput.addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader(); r.onload=v=>photoPreview.src=v.target.result; r.readAsDataURL(f);
 });
 
-// SHARE FUNCTIONALITY
 document.getElementById('shareBtn').onclick=()=>{
   const v=nameInput.value.trim(); 
-  if(!v){alert('Mohon isi nama keluarga terlebih dahulu');return}
-  const url=`${location.origin}${location.pathname}?name=${encodeURIComponent(v)}`;
+  if(!v){alert('Isi nama dulu');return}
+  const url=`${location.origin}${location.pathname}?name=${encodeURIComponent(v)}&v=${currentQuoteIndex}`;
   if(navigator.share){
-    navigator.share({title:'Tahun Baru 2026', text:`Ucapan Tahun Baru dari ${v} ✨`, url}).catch(()=>{});
+    navigator.share({title:'Tahun Baru 2026', text:`Ucapan dari ${v}`, url}).catch(()=>{});
   } else {
-    navigator.clipboard?.writeText(url).then(()=>alert('Link ucapan telah disalin!'));
+    navigator.clipboard?.writeText(url).then(()=>alert('Link disalin ke clipboard!'));
   }
 };
 </script>
