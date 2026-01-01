@@ -8,6 +8,7 @@
   <meta name="theme-color" content="#0a1538" />
 
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
     *{box-sizing:border-box}
@@ -27,9 +28,10 @@
     .share{position:fixed;top:16px;right:16px;z-index:9;display:flex;gap:8px}
     .btn{padding:12px 20px;border-radius:22px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.45);color:#fff;cursor:pointer;font-family:Inter,sans-serif;font-size:14px;transition:all 0.3s ease;}
     .btn:hover{background:rgba(255,255,255,.35);transform:translateY(-2px);}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;}
+    .btn-small{padding:8px 16px;font-size:13px;}
     .locked .editor,.locked input[type=file]{display:none}
-    .qr{margin-top:18px;display:flex;justify-content:center;padding:10px;}
-    .qr img{max-width:200px;height:auto;border-radius:10px;background:#fff;padding:10px;}
+    .qr-container{background:#fff;padding:15px;border-radius:12px;margin:20px auto;max-width:200px;display:flex;justify-content:center;}
     .bible-ref{font-style:italic;margin-top:10px;opacity:0.9;font-size:14px;}
     .controls{display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:20px;}
     .file-input-wrapper{position:relative;width:80%;max-width:360px;}
@@ -43,13 +45,38 @@
     .volume-slider::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:#ffd88a;cursor:pointer;}
     .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#fff;padding:12px 24px;border-radius:30px;z-index:1000;opacity:0;transition:opacity 0.3s;pointer-events:none;}
     .toast.show{opacity:1;}
+    .share-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1001;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all 0.3s;padding:20px;}
+    .share-modal.show{opacity:1;visibility:visible;}
+    .share-modal-content{background:rgba(255,255,255,0.1);backdrop-filter:blur(20px);border-radius:24px;padding:30px;max-width:500px;width:90%;border:1px solid rgba(255,255,255,0.2);}
+    .share-modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+    .share-modal-header h3{margin:0;color:#ffd88a;font-size:24px;}
+    .close-modal{background:none;border:none;color:#fff;font-size:28px;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background 0.3s;}
+    .close-modal:hover{background:rgba(255,255,255,0.1);}
+    .share-url-container{background:rgba(255,255,255,0.1);padding:15px;border-radius:12px;margin:20px 0;position:relative;}
+    .share-url{word-break:break-all;font-size:14px;color:#ddd;padding-right:40px;}
+    .copy-url-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.3s;}
+    .copy-url-btn:hover{background:rgba(255,255,255,0.3);}
+    .share-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:25px;}
+    .share-button{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:16px;border:none;color:#fff;cursor:pointer;font-size:15px;transition:all 0.3s;font-weight:600;}
+    .share-button.whatsapp{background:#25D366;}
+    .share-button.telegram{background:#0088cc;}
+    .share-button.facebook{background:#1877F2;}
+    .share-button.twitter{background:#1DA1F2;}
+    .share-button:hover{transform:translateY(-3px);filter:brightness(1.1);}
+    .qr-placeholder{width:200px;height:200px;background:rgba(255,255,255,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:#aaa;}
+    .preview-section{margin-bottom:25px;text-align:center;}
+    .preview-title{font-size:18px;color:#ffd88a;margin-bottom:15px;}
+    .preview-card{background:rgba(255,255,255,0.05);border-radius:16px;padding:20px;margin-top:10px;max-width:300px;margin-left:auto;margin-right:auto;}
+    .preview-name{font-size:20px;font-weight:600;color:#ffd88a;margin-top:10px;}
+    .loading-spinner{display:none;width:40px;height:40px;border:4px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:#ffd88a;animation:spin 1s linear infinite;margin:10px auto;}
+    @keyframes spin{100%{transform:rotate(360deg);}}
   </style>
 
-  <!-- MUSIC SAFE SOURCE (MULTI FALLBACK) -->
+  <!-- MUSIC SOURCES (MULTIPLE RELIABLE SOURCES) -->
   <audio id="bgMusic" preload="none" loop crossorigin="anonymous">
-    <source src="https://cdn.pixabay.com/audio/2022/12/14/audio_3f2c1c9b2b.mp3" type="audio/mpeg">
+    <source src="https://cdn.jsdelivr.net/gh/skymansoure/music/mp3/silent-night.mp3" type="audio/mpeg">
     <source src="https://assets.mixkit.co/music/preview/mixkit-silent-night-287.mp3" type="audio/mpeg">
-    <source src="https://assets.mixkit.co/music/preview/mixkit-christmas-is-here-276.mp3" type="audio/mpeg">
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
   </audio>
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -62,6 +89,58 @@
   <button class="btn" id="musicBtn">🎶 Musik</button>
   <button class="btn" id="saveBtn">🖼️ Simpan</button>
   <button class="btn" id="shareBtn">📤 Bagikan</button>
+</div>
+
+<!-- Share Modal -->
+<div class="share-modal" id="shareModal">
+  <div class="share-modal-content">
+    <div class="share-modal-header">
+      <h3><i class="fas fa-share-alt"></i> Bagikan Ucapan Natal</h3>
+      <button class="close-modal" id="closeModal">&times;</button>
+    </div>
+    
+    <div class="preview-section">
+      <div class="preview-title">Pratinjau</div>
+      <div class="preview-card">
+        <div>SELAMAT <span style="color:#ffd88a">NATAL</span></div>
+        <div class="preview-name" id="previewName">Nama Anda</div>
+      </div>
+    </div>
+    
+    <div class="qr-container" id="qrCodeContainer">
+      <div class="qr-placeholder" id="qrPlaceholder">
+        <i class="fas fa-qrcode fa-3x"></i>
+      </div>
+    </div>
+    
+    <div class="share-url-container">
+      <div class="share-url" id="shareUrl">Mengenerate link...</div>
+      <button class="copy-url-btn" id="copyUrlBtn" title="Salin Link">
+        <i class="far fa-copy"></i>
+      </button>
+    </div>
+    
+    <div class="loading-spinner" id="loadingSpinner"></div>
+    
+    <div class="share-buttons">
+      <button class="share-button whatsapp" id="whatsappBtn">
+        <i class="fab fa-whatsapp"></i> WhatsApp
+      </button>
+      <button class="share-button telegram" id="telegramBtn">
+        <i class="fab fa-telegram"></i> Telegram
+      </button>
+      <button class="share-button facebook" id="facebookBtn">
+        <i class="fab fa-facebook"></i> Facebook
+      </button>
+      <button class="share-button twitter" id="twitterBtn">
+        <i class="fab fa-twitter"></i> Twitter
+      </button>
+    </div>
+    
+    <p style="text-align:center;margin-top:20px;font-size:13px;opacity:0.7;">
+      Kode QR akan mengarahkan ke halaman ucapan Natal dengan nama yang sudah diisi
+    </p>
+  </div>
 </div>
 
 <div class="container" id="app">
@@ -91,7 +170,9 @@
       </div>
       
       <h2 id="nameDisplay" style="margin-top:14px;font-weight:600;letter-spacing:.5px;min-height:30px;"></h2>
-      <div class="qr" id="qr"></div>
+      
+      <!-- QR Code akan muncul di sini saat mode locked -->
+      <div id="dynamicQR" style="margin-top:20px;"></div>
       
       <div class="instructions">
         <h3>Cara Penggunaan:</h3>
@@ -116,7 +197,6 @@ const blessingEl = document.getElementById('blessing');
 const nameInput = document.getElementById('nameInput');
 const photoInput = document.getElementById('photoInput');
 const photoPreview = document.getElementById('photoPreview');
-const qrBox = document.getElementById('qr');
 const app = document.getElementById('app');
 const nameDisplay = document.getElementById('nameDisplay');
 const music = document.getElementById('bgMusic');
@@ -125,14 +205,32 @@ const shareBtn = document.getElementById('shareBtn');
 const saveBtn = document.getElementById('saveBtn');
 const volumeSlider = document.getElementById('volumeSlider');
 const toast = document.getElementById('toast');
+const shareModal = document.getElementById('shareModal');
+const closeModal = document.getElementById('closeModal');
+const qrCodeContainer = document.getElementById('qrCodeContainer');
+const qrPlaceholder = document.getElementById('qrPlaceholder');
+const shareUrl = document.getElementById('shareUrl');
+const copyUrlBtn = document.getElementById('copyUrlBtn');
+const whatsappBtn = document.getElementById('whatsappBtn');
+const telegramBtn = document.getElementById('telegramBtn');
+const facebookBtn = document.getElementById('facebookBtn');
+const twitterBtn = document.getElementById('twitterBtn');
+const previewName = document.getElementById('previewName');
+const loadingSpinner = document.getElementById('loadingSpinner');
+const dynamicQR = document.getElementById('dynamicQR');
+
+// ===== VARIABLES =====
+let musicInitialized = false;
+let currentQRCode = null;
+let shareUrlValue = '';
 
 // ===== TOAST NOTIFICATION =====
-function showToast(message) {
+function showToast(message, duration = 2000) {
   toast.textContent = message;
   toast.classList.add('show');
   setTimeout(() => {
     toast.classList.remove('show');
-  }, 2000);
+  }, duration);
 }
 
 // ===== TYPEWRITER EFFECT =====
@@ -274,15 +372,7 @@ photoInput.addEventListener('change', e => {
 nameInput.addEventListener('input', () => {
   const name = nameInput.value.trim();
   nameDisplay.textContent = name || '';
-  
-  // Update URL parameter without reloading
-  const url = new URL(window.location);
-  if (name) {
-    url.searchParams.set('name', name);
-  } else {
-    url.searchParams.delete('name');
-  }
-  window.history.replaceState({}, '', url);
+  previewName.textContent = name || 'Nama Anda';
 });
 
 // ===== CHECK FOR LOCKED MODE =====
@@ -293,60 +383,93 @@ if (lockName) {
   document.getElementById('watermark').style.display = 'none';
   nameDisplay.textContent = lockName;
   nameInput.value = lockName;
+  previewName.textContent = lockName;
   app.classList.add('locked');
   showToast(`Selamat Natal, ${lockName}!`);
+  
+  // Generate QR code automatically in locked mode
+  setTimeout(() => generateQRCodeForCard(lockName), 500);
 }
 
 // ===== MUSIC CONTROL =====
-let musicOn = false;
-let userInteracted = false;
-
-// Volume control
 volumeSlider.addEventListener('input', () => {
-  music.volume = volumeSlider.value;
+  if (music) {
+    music.volume = parseFloat(volumeSlider.value);
+  }
 });
 
-music.addEventListener('error', () => {
-  console.error('Music source failed to load');
-  musicBtn.textContent = '🎶 Error';
-  musicBtn.disabled = true;
-});
-
-function startMusic() {
-  music.volume = volumeSlider.value;
-  music.play().then(() => {
-    musicOn = true;
-    musicBtn.textContent = '⏸️ Musik';
-    showToast('Musik dimulai');
-  }).catch(err => {
-    console.warn('Music blocked:', err);
-    showToast('Klik untuk memulai musik');
-  });
-}
-
-// First interaction unlock
-['click', 'touchstart', 'keydown'].forEach(event => {
-  document.addEventListener(event, () => {
-    if (!userInteracted) {
-      userInteracted = true;
-      startMusic();
-    }
-  }, { once: true });
-});
-
-musicBtn.addEventListener('click', e => {
-  e.stopPropagation();
-  if (!musicOn) {
-    startMusic();
+// Music button click handler
+musicBtn.addEventListener('click', () => {
+  if (music.paused) {
+    music.play().then(() => {
+      musicBtn.textContent = '⏸️ Musik';
+      showToast('Musik dimulai');
+    }).catch(error => {
+      showToast('Klik halaman dulu untuk mengaktifkan musik');
+    });
   } else {
     music.pause();
-    musicOn = false;
     musicBtn.textContent = '🎶 Musik';
     showToast('Musik dijeda');
   }
 });
 
-// ===== SHARE FUNCTIONALITY =====
+// Error handling for music
+music.addEventListener('error', (e) => {
+  console.error('Music error:', e);
+  showToast('Sumber musik tidak tersedia', 3000);
+  musicBtn.disabled = true;
+  musicBtn.textContent = '❌ Musik';
+});
+
+// Initialize music
+music.volume = 0.5;
+musicBtn.disabled = false;
+
+// ===== SHARE FUNCTIONALITY - FIXED VERSION =====
+function generateShareUrl(name) {
+  const baseUrl = window.location.origin + window.location.pathname;
+  return `${baseUrl}?name=${encodeURIComponent(name)}`;
+}
+
+function generateQRCode(url, container) {
+  return new Promise((resolve, reject) => {
+    // Clear container
+    container.innerHTML = '';
+    
+    // Create canvas for QR code
+    QRCode.toCanvas(container, url, {
+      width: 180,
+      height: 180,
+      colorDark: '#0a1538',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    }, function(error) {
+      if (error) {
+        reject(error);
+      } else {
+        // Add styling to canvas
+        const canvas = container.querySelector('canvas');
+        if (canvas) {
+          canvas.style.borderRadius = '10px';
+          canvas.style.padding = '5px';
+        }
+        resolve();
+      }
+    });
+  });
+}
+
+function generateQRCodeForCard(name) {
+  const url = generateShareUrl(name);
+  generateQRCode(url, dynamicQR).then(() => {
+    console.log('QR Code generated for card');
+  }).catch(error => {
+    console.error('Failed to generate QR code for card:', error);
+  });
+}
+
+// Share button click handler
 shareBtn.addEventListener('click', async () => {
   const name = nameInput.value.trim();
   
@@ -356,84 +479,158 @@ shareBtn.addEventListener('click', async () => {
     return;
   }
   
-  const url = `${window.location.origin}${window.location.pathname}?name=${encodeURIComponent(name)}`;
+  // Update preview
+  previewName.textContent = name;
   
-  // Generate QR Code
-  qrBox.innerHTML = '';
-  QRCode.toCanvas(qrBox, url, {
-    width: 180,
-    height: 180,
-    colorDark: '#0a1538',
-    colorLight: '#ffffff',
-    correctLevel: QRCode.CorrectLevel.H
-  }, function(error) {
-    if (error) {
-      console.error(error);
-      showToast('Gagal membuat QR Code');
-    } else {
-      showToast('QR Code dibuat');
-    }
-  });
+  // Show loading
+  loadingSpinner.style.display = 'block';
+  shareUrl.textContent = 'Membuat kode QR...';
+  qrPlaceholder.innerHTML = '<i class="fas fa-spinner fa-spin fa-3x"></i>';
   
-  // Try Web Share API first
-  if (navigator.share) {
-    try {
-      await navigator.share({
-        title: `Selamat Natal dari ${name}`,
-        text: 'Kirimkan ucapan Natal khusus ini kepada keluarga dan jemaat.',
-        url: url
-      });
-      showToast('Berhasil dibagikan');
-    } catch (err) {
-      if (err.name !== 'AbortError') {
-        // Fallback to clipboard
-        fallbackShare(url);
-      }
-    }
-  } else {
-    // Fallback to clipboard
-    fallbackShare(url);
+  // Generate share URL
+  shareUrlValue = generateShareUrl(name);
+  
+  try {
+    // Generate QR code
+    await generateQRCode(shareUrlValue, qrCodeContainer);
+    
+    // Update URL display
+    shareUrl.textContent = shareUrlValue;
+    qrPlaceholder.style.display = 'none';
+    
+    // Setup share buttons
+    setupShareButtons(name, shareUrlValue);
+    
+    // Show modal
+    shareModal.classList.add('show');
+    
+    showToast('Berhasil membuat kode QR!');
+  } catch (error) {
+    console.error('Failed to generate QR code:', error);
+    shareUrl.textContent = 'Gagal membuat QR code';
+    qrPlaceholder.innerHTML = '<i class="fas fa-exclamation-triangle fa-3x"></i>';
+    showToast('Gagal membuat QR code', 3000);
+  } finally {
+    loadingSpinner.style.display = 'none';
   }
 });
 
-function fallbackShare(url) {
-  navigator.clipboard.writeText(url).then(() => {
-    showToast('Link berhasil disalin ke clipboard');
-  }).catch(() => {
-    // Last resort - show URL in alert
-    prompt('Salin link berikut:', url);
-    showToast('Link siap disalin');
-  });
+function setupShareButtons(name, url) {
+  const message = `Selamat Natal dari ${name}! Kirimkan ucapan Natal khusus melalui link ini: ${url}`;
+  const encodedMessage = encodeURIComponent(message);
+  const encodedUrl = encodeURIComponent(url);
+  
+  // WhatsApp
+  whatsappBtn.onclick = () => {
+    window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+  };
+  
+  // Telegram
+  telegramBtn.onclick = () => {
+    window.open(`https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(`Selamat Natal dari ${name}!`)}`, '_blank');
+  };
+  
+  // Facebook
+  facebookBtn.onclick = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodeURIComponent(`Selamat Natal dari ${name}`)}`, '_blank');
+  };
+  
+  // Twitter
+  twitterBtn.onclick = () => {
+    window.open(`https://twitter.com/intent/tweet?text=${encodedMessage}`, '_blank');
+  };
 }
+
+// Copy URL button
+copyUrlBtn.addEventListener('click', async () => {
+  if (!shareUrlValue) return;
+  
+  try {
+    await navigator.clipboard.writeText(shareUrlValue);
+    showToast('Link berhasil disalin!');
+    
+    // Change icon temporarily
+    const icon = copyUrlBtn.querySelector('i');
+    icon.className = 'fas fa-check';
+    setTimeout(() => {
+      icon.className = 'far fa-copy';
+    }, 2000);
+  } catch (err) {
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea');
+    textArea.value = shareUrlValue;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    showToast('Link berhasil disalin!');
+  }
+});
+
+// Close modal
+closeModal.addEventListener('click', () => {
+  shareModal.classList.remove('show');
+});
+
+// Close modal when clicking outside
+shareModal.addEventListener('click', (e) => {
+  if (e.target === shareModal) {
+    shareModal.classList.remove('show');
+  }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && shareModal.classList.contains('show')) {
+    shareModal.classList.remove('show');
+  }
+});
 
 // ===== SAVE IMAGE =====
 saveBtn.addEventListener('click', () => {
   const name = nameInput.value.trim();
   const fileName = name ? `natal-${name.replace(/\s+/g, '-').toLowerCase()}.png` : 'selamat-natal.png';
   
+  // Hide share modal if open
+  shareModal.classList.remove('show');
+  
   // Show loading
-  saveBtn.textContent = 'Menyimpan...';
+  const originalText = saveBtn.textContent;
+  saveBtn.textContent = '⏳ Menyimpan...';
   saveBtn.disabled = true;
   
+  // Use html2canvas to capture the card
   html2canvas(document.getElementById('capture'), {
     scale: 2,
     useCORS: true,
     backgroundColor: null,
-    logging: false
+    logging: false,
+    allowTaint: true,
+    foreignObjectRendering: true
   }).then(canvas => {
-    const link = document.createElement('a');
-    link.download = fileName;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    // Convert canvas to data URL
+    const imageData = canvas.toDataURL('image/png');
     
-    saveBtn.textContent = '🖼️ Simpan';
+    // Create download link
+    const link = document.createElement('a');
+    link.href = imageData;
+    link.download = fileName;
+    
+    // Trigger download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Restore button
+    saveBtn.textContent = originalText;
     saveBtn.disabled = false;
-    showToast('Gambar berhasil disimpan');
-  }).catch(err => {
-    console.error('Save error:', err);
-    saveBtn.textContent = '🖼️ Simpan';
+    
+    showToast('Gambar berhasil disimpan!');
+  }).catch(error => {
+    console.error('Error saving image:', error);
+    saveBtn.textContent = originalText;
     saveBtn.disabled = false;
-    showToast('Gagal menyimpan gambar');
+    showToast('Gagal menyimpan gambar', 3000);
   });
 });
 
@@ -446,15 +643,29 @@ nameInput.addEventListener('keypress', (e) => {
 
 // ===== INITIALIZATION =====
 window.addEventListener('load', () => {
-  console.assert(document.getElementById('capture'), 'Capture exists');
-  console.assert(typeof QRCode !== 'undefined', 'QRCode loaded');
-  console.assert(music instanceof HTMLAudioElement, 'Music element ok');
+  console.log('Aplikasi Template Natal dimuat');
+  
+  // Check for music support
+  if (music.canPlayType('audio/mpeg') === '') {
+    musicBtn.disabled = true;
+    musicBtn.textContent = '❌ Musik (Tidak didukung)';
+    showToast('Browser tidak mendukung format musik', 3000);
+  }
   
   // Show welcome message
   setTimeout(() => {
-    showToast('Selamat datang! Selamat Natal dan Tahun Baru');
-  }, 1000);
+    showToast('Selamat Natal dan Tahun Baru! 🎄✨');
+  }, 1500);
 });
+
+// ===== INTERACTION HANDLER FOR MUSIC =====
+// Handle first user interaction for music
+document.addEventListener('click', () => {
+  if (!musicInitialized) {
+    musicInitialized = true;
+    music.volume = parseFloat(volumeSlider.value);
+  }
+}, { once: true });
 </script>
 </body>
 </html>
