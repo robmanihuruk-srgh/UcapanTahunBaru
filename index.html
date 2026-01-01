@@ -1,1 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kartu Ucapan Digital – 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: Inter, sans-serif; color: #f5f5f5;
+      background: radial-gradient(circle at top, #0b1430, #000);
+      min-height: 100vh; overflow-x: hidden;
+    }
+    canvas#fx { position: fixed; inset: 0; z-index: 0 }
+    .container { position: relative; z-index: 1; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .card { width: 100%; max-width: 820px; background: rgba(255,255,255,.08); border-radius: 30px; backdrop-filter: blur(22px); box-shadow: 0 50px 160px rgba(0,0,0,.9); overflow: hidden; animation: rise 1.3s ease forwards; }
+    @keyframes rise { from {opacity:0; transform:translateY(50px)} to {opacity:1; transform:none} }
+
+    .photo-wrapper { display:flex; flex-direction:column; align-items:center; padding: 24px 24px 0; }
+    .photo { width: 100%; aspect-ratio: 16 / 9; max-height: 450px; border-radius: 22px; overflow: hidden; box-shadow: 0 25px 80px rgba(0,0,0,.7); display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.4); }
+    .photo.portrait { aspect-ratio: 4 / 5; }
+    .photo img { width: 100%; height: 100%; object-fit: contain; }
+
+    .content { padding: 20px 32px 42px; text-align:center }
+    h1 { font-family:'Playfair Display',serif; font-size:clamp(28px,5vw,48px); margin:18px 0 6px; letter-spacing: 1px; }
+    h1 span { color:#ffd88a; text-shadow:0 0 22px rgba(255,216,138,.8) }
+    .subtitle { font-size:15px; opacity:.85; letter-spacing: 2px; text-transform: uppercase; }
+    .verse { margin:22px auto 0; min-height: 80px; max-width:520px; line-height:1.9; font-size:16px; font-style: italic; color: #e0e0e0; }
+    .signature { margin-top:26px; font-weight:600; color:#ffd88a; font-size: 1.3em; }
+
+    .editor { margin-top:20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+    .editor input { padding:12px 18px; border-radius:12px; border: 1px solid rgba(255,255,255,0.2); width: 80%; max-width:340px; background: rgba(255,255,255,0.1); color: #fff; margin-bottom: 15px; text-align: center; }
+    .top-action { position:fixed; top:16px; right:16px; z-index:10 }
+    .btn { padding:12px 22px; border-radius:16px; background:rgba(255,216,138,.2); border:1px solid rgba(255,216,138,.4); color:#ffd88a; cursor:pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; font-weight: 600; display: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    .btn:hover { background: rgba(255,216,138,0.4); transform: translateY(-2px); }
+    
+    .locked .editor, .locked #photoInput { display:none }
+    @media (max-width:480px){ .photo { aspect-ratio: 1/1; } }
+  </style>
+</head>
+<body>
+
+<canvas id="fx"></canvas>
+<audio id="music" loop><source src="Music_NewYear.mp4" type="audio/mp4"></audio>
+
+<div class="top-action">
+  <button class="btn" id="shareBtn">📤 Bagikan Kartu</button>
+  <button class="btn" id="playBtn">🎵 Musik</button>
+</div>
+
+<div class="container" id="app">
+  <div class="card">
+    <div class="photo-wrapper">
+      <div class="photo" id="photoContainer">
+        <img id="photoPreview" src="faminbali.jfif" alt="Foto" />
+      </div>
+      <input type="file" id="photoInput" accept="image/*" style="margin-top:14px;color:#ccc; font-size: 11px;" />
+    </div>
+    <div class="content">
+      <h1>SELAMAT TAHUN BARU <span>2026</span></h1>
+      <div class="subtitle">Damai • Sukacita • Berkat</div>
+      <div class="verse" id="verse"></div>
+      <div class="signature" id="sign"></div>
+      <div class="editor">
+        <input type="text" id="nameInput" placeholder="Nama Anda / Keluarga" />
+        <button class="btn" id="randomBtn" style="display:inline-block; background:rgba(255,255,255,0.1); color:#fff;">✨ Ganti Kata</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// --- Background Particle ---
+const c=document.getElementById('fx'),x=c.getContext('2d'); let w,h,p=[];
+function rs(){w=c.width=innerWidth;h=c.height=innerHeight} rs(); addEventListener('resize',rs);
+for(let i=0;i<80;i++)p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2,s:Math.random()+0.2});
+(function a(){x.clearRect(0,0,w,h);p.forEach(o=>{o.y+=o.s;o.y%=h;x.fillStyle='rgba(255,215,140,.6)';x.beginPath();x.arc(o.x,o.y,o.r,0,7);x.fill()});requestAnimationFrame(a)})();
+
+// --- Logic & Data ---
+const LIST_UCAPAN = [
+  "“Segala Impian dan Harapan Terwujud, Diberikan Kesehatan, Kebahagiaan, dan Rezeki yang Mengalir Deras.”",
+  "“Kiranya terang Ilahi menyertai setiap langkah kita di tahun 2026, membawa damai sejahtera bagi kita semua.”",
+  "“Selamat tinggal masa lalu, selamat datang masa depan. Semoga kasih Tuhan selalu menyertai kita.”"
+];
+
+const q=new URLSearchParams(location.search);
+const nameParam=q.get('name'), quoteIdx=q.get('v'), imgData=q.get('img');
+const signEl=document.getElementById('sign'), verseEl=document.getElementById('verse'), photoPreview=document.getElementById('photoPreview'), photoContainer=document.getElementById('photoContainer');
+
+let currentQuoteIndex = quoteIdx ? parseInt(quoteIdx) : 0;
+let currentBase64 = ""; 
+
+// Mode Penerima
+if(nameParam) {
+  document.getElementById('app').classList.add('locked');
+  signEl.textContent = nameParam;
+  document.getElementById('playBtn').style.display = 'block';
+  if(imgData) {
+    // Memulihkan format Base64 yang disingkat
+    photoPreview.src = imgData.startsWith('data:') ? imgData : "data:image/jpeg;base64," + imgData;
+  }
+} else {
+  document.getElementById('shareBtn').style.display = 'block';
+}
+
+function typeWriter(text, i = 0) {
+  if (i === 0) verseEl.textContent = '';
+  if (i < text.length) { verseEl.textContent += text[i]; setTimeout(() => typeWriter(text, i + 1), 40); }
+}
+typeWriter(LIST_UCAPAN[currentQuoteIndex]);
+
+// --- Image Processing (No Firebase) ---
+document.getElementById('photoInput').onchange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      // AGGRESSIVE RESIZING: Maksimal 400px agar URL tidak terlalu panjang
+      let width = img.width, height = img.height, max = 400;
+      if (width > height) { if(width > max){ height *= max/width; width = max; } }
+      else { if(height > max){ width *= max/height; height = max; } }
+      
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      
+      // Deteksi Portrait/Landscape
+      photoContainer.className = height > width ? 'photo portrait' : 'photo';
+
+      // Kompresi kualitas ke 0.5 (50%) untuk menghemat karakter URL
+      currentBase64 = canvas.toDataURL('image/jpeg', 0.5);
+      photoPreview.src = currentBase64;
+    };
+    img.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+document.getElementById('shareBtn').onclick = () => {
+  const name = document.getElementById('nameInput').value.trim();
+  if(!name) return alert("Isi nama pengirim dulu!");
+  
+  // Hapus prefix "data:image/jpeg;base64," untuk meringkas URL
+  const cleanBase64 = currentBase64.replace(/^data:image\/[a-z]+;base64,/, "");
+  const finalUrl = `${location.origin}${location.pathname}?name=${encodeURIComponent(name)}&v=${currentQuoteIndex}&img=${encodeURIComponent(cleanBase64)}`;
+  
+  if (finalUrl.length > 8000) {
+    alert("Ukuran foto masih terlalu besar untuk dikirim lewat link. Coba foto lain atau gunakan foto landscape.");
+  } else {
+    if(navigator.share) {
+      navigator.share({ title: 'Kartu Ucapan 2026', url: finalUrl });
+    } else {
+      navigator.clipboard.writeText(finalUrl);
+      alert("Link disalin! Jika link terlalu panjang, WhatsApp mungkin akan memotongnya.");
+    }
+  }
+};
+
+document.getElementById('playBtn').onclick = () => {
+  document.getElementById('music').play().catch(e=>alert("Klik layar sekali lagi untuk musik"));
+  document.getElementById('playBtn').style.display = 'none';
+};
+
+document.getElementById('randomBtn').onclick = () => {
+  currentQuoteIndex = (currentQuoteIndex + 1) % LIST_UCAPAN.length;
+  typeWriter(LIST_UCAPAN[currentQuoteIndex]);
+};
+</script>
+</body>
+</html>
 
