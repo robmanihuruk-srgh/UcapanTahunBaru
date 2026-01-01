@@ -2,127 +2,202 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <title>✨ Tahun Baru – TRANSCEND MODE</title>
+  <title>✨ Selamat Tahun Baru 2026</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Ucapan Tahun Baru sinematik – TRANSCEND MODE (Locked, Share, Export Image, PWA, Watermark)." />
+  <meta name="description" content="Ucapan Tahun Baru 2026 – Locked & Share Only." />
 
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
-  <!-- PWA -->
   <meta name="theme-color" content="#0a1538" />
-  <link rel="manifest" href="manifest.json">
 
   <style>
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,sans-serif;color:#f6f6f6;background:radial-gradient(circle at top,#0a1538,#000);min-height:100vh;overflow-x:hidden}
-    canvas#fx{position:fixed;inset:0;z-index:0}
-    .container{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-    .card{width:100%;max-width:900px;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.03));border-radius:40px;backdrop-filter:blur(30px);box-shadow:0 80px 240px rgba(0,0,0,.95);overflow:hidden;animation:enter 1.8s ease forwards;position:relative}
-    @keyframes enter{from{opacity:0;transform:translateY(80px) scale(.94)}to{opacity:1;transform:none}}
-
-    .photo-wrapper{display:flex;flex-direction:column;align-items:center;padding-top:32px}
-    .photo{width:min(82%,380px);aspect-ratio:4/5;border-radius:28px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,.85);background:#111}
+    body{margin:0;font-family:Inter,sans-serif;color:#fff;background:#000;min-height:100vh;overflow-y:auto}
+    canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .container{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .card{width:100%;max-width:860px;border-radius:36px;background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.05));backdrop-filter:blur(30px);box-shadow:0 80px 200px rgba(0,0,0,.95);overflow:hidden;position:relative}
+    .watermark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:.08;font-size:clamp(28px,6vw,64px);font-weight:700;letter-spacing:4px;transform:rotate(-18deg);text-transform:uppercase}
+    .photo{width:100%;max-width:360px;margin:auto;aspect-ratio:4/5;border-radius:26px;overflow:hidden}
     .photo img{width:100%;height:100%;object-fit:cover}
-
-    .content{padding:36px 40px 56px;text-align:center}
-    h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,64px);margin:22px 0 6px}
-    h1 span{color:#ffd88a;text-shadow:0 0 34px rgba(255,216,138,1)}
-    .subtitle{font-size:15px;opacity:.9;letter-spacing:.4px}
-    .verse{margin:30px auto 0;max-width:600px;line-height:2;font-size:15px}
-    .signature{margin-top:36px;font-weight:600;font-size:17px;color:#ffd88a;text-shadow:0 0 18px rgba(255,216,138,.7)}
-
-    .editor{margin-top:24px}
-    .editor input{padding:12px 20px;border-radius:18px;border:none;width:86%;max-width:400px;font-size:14px}
-    .editor input:focus{outline:none}
-
-    .share{position:fixed;top:16px;right:16px;z-index:10;display:flex;gap:8px}
-    .btn{padding:12px 22px;border-radius:22px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.45);color:#fff;cursor:pointer;font-size:14px;backdrop-filter:blur(14px)}
-    .btn:active{transform:scale(.95)}
-
-    .watermark{position:absolute;bottom:14px;right:18px;font-size:11px;opacity:.35;pointer-events:none}
-
-    .locked .editor,.locked #photoInput{display:none}
-    @media(max-width:480px){.photo{width:92%}.content{padding:28px 22px 46px}}
+    .content{text-align:center;padding:34px}
+    h1{font-family:'Playfair Display',serif;font-size:clamp(34px,6vw,60px);animation:glow 3s ease-in-out infinite alternate}
+    @keyframes glow{from{text-shadow:0 0 10px rgba(255,216,138,.4)}to{text-shadow:0 0 35px rgba(255,216,138,1)}}
+    @keyframes finishGlow{0%{text-shadow:0 0 0 rgba(255,216,138,0)}100%{text-shadow:0 0 45px rgba(255,216,138,1),0 0 90px rgba(255,216,138,.8)}}
+    h1 span{color:#ffd88a;text-shadow:0 0 28px #ffd88a}
+    .editor input{padding:12px 18px;border-radius:16px;border:none;width:80%;max-width:360px}
+    .share{position:fixed;top:16px;right:16px;z-index:9;display:flex;gap:8px}
+    .btn{padding:12px 20px;border-radius:22px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.45);color:#fff;cursor:pointer}
+    .locked .editor,.locked input[type=file]{display:none}
+    .qr{margin-top:18px}
   </style>
+
+  <!-- MUSIC SAFE SOURCE (MULTI FALLBACK) -->
+  <audio id="bgMusic" preload="none" loop crossorigin="anonymous">
+    <source src="https://cdn.pixabay.com/audio/2022/11/09/audio_eb7c0c6ef0.mp3" type="audio/mpeg">
+    <source src="https://cdn.pixabay.com/download/audio/2022/11/09/audio_eb7c0c6ef0.mp3?filename=new-year-ambient.mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
 
-<canvas id="fx"></canvas>
-
-<audio id="music" loop>
-  <source src="https://cdn.pixabay.com/audio/2022/11/09/audio_eb7c0c6ef0.mp3" type="audio/mpeg">
-</audio>
+<canvas id="fire"></canvas>
 
 <div class="share">
+  <button class="btn" id="musicBtn">🎶 Musik</button>
+  <button class="btn" id="saveBtn">🖼️ Simpan</button>
   <button class="btn" id="shareBtn">📤 Bagikan</button>
-  <button class="btn" id="imgBtn">🖼️ Simpan Gambar</button>
 </div>
 
 <div class="container" id="app">
   <div class="card" id="capture">
+    <div class="watermark" id="watermark">DEMO • TAHUN BARU 2026</div>
 
-    <div class="photo-wrapper">
-      <div class="photo"><img id="photoPreview" src="faminbali.jfif" /></div>
-      <input type="file" id="photoInput" accept="image/*" style="margin-top:14px;color:#ccc" />
+    <div class="photo">
+      <img id="photoPreview" src="faminbali.jfif" alt="Foto">
     </div>
+    <input type="file" id="photoInput" accept="image/*" style="margin:14px auto;display:block">
 
     <div class="content">
-      <h1>Selamat Tahun Baru <span>2026</span></h1>
-      <div class="subtitle">Damai • Terang • Harapan</div>
-      <div class="verse" id="verse"></div>
-      <div class="signature" id="sign"></div>
-      <div class="editor"><input id="nameInput" placeholder="Nama keluarga" /></div>
+      <h1>SELAMAT TAHUN BARU <span>2026</span></h1>
+      <p id="blessingWrap" style="margin-top:12px;font-size:clamp(14px,2.5vw,18px);opacity:.95;line-height:1.6"><span id="blessing"></span></p>
+      <div class="editor"><input id="nameInput" placeholder="Nama Keluarga"></div>
+      <h2 id="nameDisplay" style="margin-top:14px;font-weight:600;letter-spacing:.5px"></h2>
+      <div class="qr" id="qr"></div>
     </div>
-
-    <div class="watermark" id="watermark"></div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 <script>
-// ================= PARTICLES =================
-const c=document.getElementById('fx'),x=c.getContext('2d');let w,h,p=[];
-function rs(){w=c.width=innerWidth;h=c.height=innerHeight}rs();addEventListener('resize',rs);
-for(let i=0;i<180;i++)p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.6,s:Math.random()+0.5});
-(function a(){x.clearRect(0,0,w,h);p.forEach(o=>{o.y+=o.s;o.y%=h;x.fillStyle='rgba(255,215,140,.8)';x.beginPath();x.arc(o.x,o.y,o.r,0,7);x.fill()});requestAnimationFrame(a)})();
+// ===== TYPEWRITER EFFECT =====
+const blessingText='Kiranya terang ilahi menyertai setiap langkah kita di tahun yang baru.';
+const blessingEl=document.getElementById('blessing');
+let i=0;
+(function type(){
+  if(i<=blessingText.length){
+    blessingEl.textContent=blessingText.slice(0,i++);
+    setTimeout(type,45);
+  }else{
+    document.getElementById('blessingWrap').style.animation='finishGlow 2.5s ease forwards';
+  }
+})();
 
-// ================= DATA =================
-const TEXT='Kiranya terang ilahi menyertai setiap langkah kita di tahun yang baru.';
-const verse=document.getElementById('verse'),sign=document.getElementById('sign'),wm=document.getElementById('watermark');
-const nameInput=document.getElementById('nameInput'),photoInput=document.getElementById('photoInput'),photoPreview=document.getElementById('photoPreview'),app=document.getElementById('app');
-
-let i=0;(function t(){if(i<TEXT.length){verse.textContent+=TEXT[i++];setTimeout(t,36)}})();
-
-const q=new URLSearchParams(location.search);const lockName=q.get('name');
-if(lockName){sign.textContent=lockName;nameInput.value=lockName;wm.textContent='Untuk '+lockName;app.classList.add('locked')}
-
-let played=false;document.body.addEventListener('click',()=>{if(played)return;played=true;music.play().catch(()=>{})},{once:true});
-nameInput.addEventListener('input',()=>{sign.textContent=nameInput.value;wm.textContent='Untuk '+nameInput.value});
-photoInput.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=v=>photoPreview.src=v.target.result;r.readAsDataURL(f)});
-
-// ================= SHARE =================
-document.getElementById('shareBtn').onclick=()=>{
-  const v=nameInput.value.trim();if(!v){alert('Isi nama dulu');return}
-  const url=`${location.origin}${location.pathname}?name=${encodeURIComponent(v)}`;
-  if(navigator.share){navigator.share({title:'Tahun Baru 2026',text:'Ucapan Tahun Baru ✨',url}).catch(()=>{});return}
-  navigator.clipboard?.writeText(url).then(()=>alert('Link disalin')).catch(()=>prompt('Salin link:',url));
-};
-
-// ================= EXPORT IMAGE =================
-document.getElementById('imgBtn').onclick=()=>{
-  html2canvas(document.getElementById('capture'),{backgroundColor:null,scale:2}).then(c=>{
-    const a=document.createElement('a');a.download='Tahun-Baru-2026.png';a.href=c.toDataURL('image/png');a.click();
+// ===== FIREWORKS =====
+const c=document.getElementById('fire'),x=c.getContext('2d');
+let w,h;
+function resize(){w=c.width=innerWidth;h=c.height=innerHeight}
+resize();addEventListener('resize',resize);
+let fireworks=[];
+setInterval(()=>fireworks.push({x:Math.random()*w,y:h,r:Math.random()*3+2,vy:Math.random()*-6-4}),600);
+(function animate(){
+  x.clearRect(0,0,w,h);
+  fireworks.forEach(o=>{
+    o.y+=o.vy; o.vy+=0.15;
+    x.fillStyle='rgba(255,215,140,.9)';
+    x.beginPath(); x.arc(o.x,o.y,o.r,0,Math.PI*2); x.fill();
   });
-};
+  fireworks=fireworks.filter(o=>o.y>0);
+  requestAnimationFrame(animate);
+})();
 
-// ================= PWA SERVICE WORKER =================
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
+// ===== DATA & LOCK =====
+const nameInput=document.getElementById('nameInput');
+const photoInput=document.getElementById('photoInput');
+const photoPreview=document.getElementById('photoPreview');
+const qrBox=document.getElementById('qr');
+const app=document.getElementById('app');
+const nameDisplay=document.getElementById('nameDisplay');
+
+photoInput.addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader(); r.onload=v=>photoPreview.src=v.target.result; r.readAsDataURL(f);
+});
+
+const q=new URLSearchParams(location.search);
+const lockName=q.get('name');
+if(lockName){
+  document.getElementById('watermark').style.display='none';
+  nameDisplay.textContent='Keluarga '+lockName;
+  app.classList.add('locked');
 }
 
-console.assert(true,'TRANSCEND MODE READY');
+nameInput.addEventListener('input',()=>{
+  nameDisplay.textContent=nameInput.value ? 'Keluarga '+nameInput.value : '';
+});
+
+// ===== MUSIC SAFE MODE (AUTO AFTER ANY CLICK) =====
+const music=document.getElementById('bgMusic');
+const musicBtn=document.getElementById('musicBtn');
+let musicOn=false;
+let userInteracted=false;
+
+music.addEventListener('error',()=>{
+  console.error('Music source failed to load');
+});
+
+function startMusic(){
+  if(musicOn) return;
+  music.volume=0.5;
+  music.play().then(()=>{
+    musicOn=true;
+    musicBtn.textContent='⏸️ Musik';
+  }).catch(err=>{
+    console.warn('Music blocked until interaction');
+  });
+}
+
+// Auto start after first interaction anywhere
+['click','touchstart','keydown'].forEach(evt=>{
+  document.addEventListener(evt,()=>{
+    if(!userInteracted){
+      userInteracted=true;
+      startMusic();
+    }
+  },{once:true});
+});
+
+// Manual toggle still works
+musicBtn.addEventListener('click',e=>{
+  e.stopPropagation();
+  if(!musicOn){ startMusic(); }
+  else{ music.pause(); musicOn=false; musicBtn.textContent='🎶 Musik'; }
+});
+      console.error(err);
+    });
+  }else{
+    music.pause(); musicOn=false; musicBtn.textContent='🎶 Musik';
+  }
+});
+
+// ===== SHARE + QR =====
+function genQR(url){
+  qrBox.innerHTML='';
+  QRCode.toCanvas(url,{width:160,color:{dark:'#ffd88a',light:'transparent'}},(e,c)=>{ if(!e) qrBox.appendChild(c); });
+}
+
+document.getElementById('shareBtn').addEventListener('click',()=>{
+  const v=nameInput.value.trim(); if(!v){alert('Isi nama dulu');return}
+  const url=`${location.origin}${location.pathname}?name=${encodeURIComponent(v)}`;
+  genQR(url);
+  if(navigator.share){navigator.share({title:'Tahun Baru 2026',url}).catch(()=>{});}
+  else{navigator.clipboard.writeText(url).then(()=>alert('Link disalin'));}
+});
+
+// ===== SAVE IMAGE =====
+document.getElementById('saveBtn').addEventListener('click',()=>{
+  html2canvas(document.getElementById('capture'),{scale:2}).then(cvs=>{
+    const a=document.createElement('a');
+    a.download='tahun-baru-2026.png';
+    a.href=cvs.toDataURL('image/png');
+    a.click();
+  });
+});
+
+// ===== BASIC TESTS =====
+console.assert(document.getElementById('capture'),'Capture exists');
+console.assert(typeof QRCode!=='undefined','QRCode loaded');
+console.assert(music instanceof HTMLAudioElement,'Music element ok');
+console.assert(music.canPlayType('audio/mpeg')!=='' ,'Browser can play mp3');
 </script>
 </body>
 </html>
-
