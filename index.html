@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <title>🌌 Tahun Baru 2026 – GKPS Tangerang</title>
+  <title>Kartu Ucapan Digital – 2026</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -59,11 +59,12 @@
     }
 
     .content { padding: 20px 32px 42px; text-align:center }
-    h1 { font-family:'Playfair Display',serif; font-size:clamp(30px,6vw,52px); margin:18px 0 6px }
+    h1 { font-family:'Playfair Display',serif; font-size:clamp(28px,5vw,48px); margin:18px 0 6px; letter-spacing: 1px; }
     h1 span { color:#ffd88a; text-shadow:0 0 22px rgba(255,216,138,.8) }
-    .subtitle { font-size:15px; opacity:.85; letter-spacing: 2px; }
+    
+    .subtitle { font-size:15px; opacity:.85; letter-spacing: 2px; text-transform: uppercase; }
     .verse { margin:22px auto 0; min-height: 80px; max-width:520px; line-height:1.9; font-size:16px; font-style: italic; color: #e0e0e0; }
-    .signature { margin-top:26px; font-weight:600; color:#ffd88a; font-size: 1.2em; }
+    .signature { margin-top:26px; font-weight:600; color:#ffd88a; font-size: 1.3em; }
 
     .editor { margin-top:20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
     .editor input { 
@@ -74,30 +75,34 @@
       max-width:340px; 
       background: rgba(255,255,255,0.1);
       color: #fff;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      text-align: center;
     }
 
     .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
     
-    .share { position:fixed; top:16px; right:16px; z-index:5 }
+    .top-action { position:fixed; top:16px; right:16px; z-index:10 }
     .btn { 
-      padding:10px 18px; 
+      padding:12px 22px; 
       border-radius:16px; 
-      background:rgba(255,255,255,.18); 
-      border:1px solid rgba(255,255,255,.3); 
-      color:#fff; 
+      background:rgba(255,216,138,.2); 
+      border:1px solid rgba(255,216,138,.4); 
+      color:#ffd88a; 
       cursor:pointer; 
-      backdrop-filter: blur(5px);
-      transition: 0.3s;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      font-weight: 600;
+      display: none; /* Hidden by default, toggled via JS */
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
-    .btn:hover { background: rgba(255,255,255,0.3); }
-    .btn-secondary { background: rgba(255, 216, 138, 0.2); border-color: #ffd88a; color: #ffd88a; }
+    .btn:hover { background: rgba(255,216,138,0.4); transform: translateY(-2px); }
+    .btn-secondary { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color: #fff; }
 
     .locked .editor, .locked #photoInput { display:none }
 
     @media (max-width:480px){ 
       .photo img { max-height: 350px; } 
-      .content { padding:26px 22px 36px } 
+      .content { padding:26px 15px 36px } 
     }
   </style>
 </head>
@@ -109,8 +114,9 @@
   <source src="Music_NewYear.mp4" type="audio/mp4">
 </audio>
 
-<div class="share">
-  <button class="btn" id="shareBtn" type="button">📤 Bagikan</button>
+<div class="top-action">
+  <button class="btn" id="shareBtn" style="display: none;">📤 Bagikan Kartu</button>
+  <button class="btn" id="playBtn" style="display: none;">🎵 Tekan Disini Untuk Musik</button>
 </div>
 
 <div class="container" id="app">
@@ -119,19 +125,20 @@
       <div class="photo">
         <img id="photoPreview" src="faminbali.jfif" alt="Foto Keluarga" />
       </div>
-      <input type="file" id="photoInput" accept="image/*" style="margin-top:14px;color:#ccc; font-size: 12px;" />
+      <input type="file" id="photoInput" accept="image/*" style="margin-top:14px;color:#ccc; font-size: 11px;" />
     </div>
 
     <div class="content">
-      <h1>Selamat Tahun Baru <span>2026</span></h1>
-      <div class="subtitle">Damai • Terang • Harapan</div>
+      <h1>Kartu Ucapan Digital <span>2026</span></h1>
+      <div class="subtitle">GKPS Tangerang • Sukacita • Berkat</div>
+      
       <div class="verse" id="verse"></div>
       <div class="signature" id="sign"></div>
       
       <div class="editor">
-        <input type="text" id="nameInput" placeholder="Nama Keluarga / Pengirim" />
+        <input type="text" id="nameInput" placeholder="Masukkan Nama Anda / Keluarga" />
         <div class="btn-group">
-            <button class="btn btn-secondary" id="randomBtn">✨ Acak Ucapan</button>
+            <button class="btn btn-secondary" id="randomBtn" style="display: block;">✨ Ganti Kata Mutiara</button>
         </div>
       </div>
     </div>
@@ -139,31 +146,35 @@
 </div>
 
 <script>
-// --- Particle FX ---
+// --- Background Particle ---
 const c=document.getElementById('fx'),x=c.getContext('2d'); let w,h,p=[];
 function rs(){w=c.width=innerWidth;h=c.height=innerHeight} rs(); addEventListener('resize',rs);
 for(let i=0;i<120;i++)p.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+0.5,s:Math.random()+0.2});
 (function a(){x.clearRect(0,0,w,h);p.forEach(o=>{o.y+=o.s;o.y%=h;x.fillStyle='rgba(255,215,140,.7)';x.beginPath();x.arc(o.x,o.y,o.r,0,7);x.fill()});requestAnimationFrame(a)})();
 
-// --- Quotes Data ---
+// --- Data ---
 const LIST_UCAPAN = [
   "“Segala Impian dan Harapan Terwujud, Diberikan Kesehatan, Kebahagiaan, dan Rezeki yang Mengalir Deras.”",
-  "“Kiranya terang Ilahi menyertai setiap langkah kita di tahun yang baru, membawa damai sejahtera bagi kita semua.”",
-  "“Selamat tinggal 2025, selamat datang 2026. Semoga kasih Tuhan selalu menyertai perjalanan keluarga kita.”",
-  "“Tahun baru adalah lembaran bersih untuk menuliskan cerita indah dalam iman dan pengharapan baru.”",
+  "“Kiranya terang Ilahi menyertai setiap langkah kita di tahun 2026, membawa damai sejahtera bagi kita semua.”",
+  "“Selamat tinggal masa lalu, selamat datang masa depan. Semoga kasih Tuhan selalu menyertai perjalanan keluarga kita.”",
+  "“Tahun baru adalah lembaran bersih untuk menuliskan cerita indah dalam iman dan pengharapan yang baru.”",
   "“Berjalanlah dengan iman di tahun 2026. Kiranya berkat Tuhan melimpah atas rumah tangga dan pekerjaan kita.”",
-  "“Semoga di tahun 2026 ini, setiap doa-doa kita dijawab dengan cara Tuhan yang paling indah.”"
+  "“Tuhan membuat segala sesuatu indah pada waktunya. Selamat menyambut tahun penuh mukjizat dan anugerah.”"
 ];
 
-// --- Core Logic ---
 const q=new URLSearchParams(location.search); 
-const n=q.get('name');
-const vIdx=q.get('v'); // Parameter untuk menyimpan indeks ucapan
-const app=document.getElementById('app'), sign=document.getElementById('sign'), verseEl=document.getElementById('verse');
-const nameInput=document.getElementById('nameInput'), photoInput=document.getElementById('photoInput'), photoPreview=document.getElementById('photoPreview');
+const nameParam=q.get('name');
+const quoteIdx=q.get('v'); 
+const app=document.getElementById('app');
+const signEl=document.getElementById('sign');
+const verseEl=document.getElementById('verse');
+const nameInput=document.getElementById('nameInput');
+const photoInput=document.getElementById('photoInput');
+const shareBtn=document.getElementById('shareBtn');
+const playBtn=document.getElementById('playBtn');
 const music = document.getElementById('music');
 
-let currentQuoteIndex = vIdx ? parseInt(vIdx) : 0;
+let currentQuoteIndex = quoteIdx ? parseInt(quoteIdx) : 0;
 let typingTimer;
 
 function typeWriter(text, i = 0) {
@@ -174,44 +185,55 @@ function typeWriter(text, i = 0) {
   }
 }
 
-function updateVerse(index) {
-  clearTimeout(typingTimer);
-  currentQuoteIndex = index;
-  typeWriter(LIST_UCAPAN[index]);
+// Logic Tampilan Berdasarkan Mode (Editor vs Receiver)
+if(nameParam) {
+    // MODE PENERIMA (LINK HASIL SHARING)
+    app.classList.add('locked');
+    signEl.textContent = nameParam;
+    playBtn.style.display = 'block'; // Munculkan tombol Musik
+    shareBtn.style.display = 'none';  // Pastikan tombol Share sembunyi
+} else {
+    // MODE EDITOR (PEMBUAT KARTU)
+    shareBtn.style.display = 'block'; // Munculkan tombol Bagikan
+    playBtn.style.display = 'none';   // Sembunyikan tombol Musik
 }
 
-// Initial Load
-if(n){ 
-  sign.textContent = n; 
-  nameInput.value = n; 
-  app.classList.add('locked'); 
-}
-updateVerse(currentQuoteIndex);
+typeWriter(LIST_UCAPAN[currentQuoteIndex]);
 
-// Buttons
+// Event: Play Music
+playBtn.onclick = () => {
+    music.play().catch(e => console.log("Audio play failed"));
+    playBtn.innerHTML = "🎵 Musik Aktif";
+    playBtn.style.opacity = "0.7";
+    setTimeout(() => { playBtn.style.display = 'none'; }, 2000); // Sembunyi setelah 2 detik agar layar bersih
+};
+
+// Event: Random Quote
 document.getElementById('randomBtn').onclick = () => {
   let newIdx;
   do { newIdx = Math.floor(Math.random() * LIST_UCAPAN.length); } while (newIdx === currentQuoteIndex);
-  updateVerse(newIdx);
+  clearTimeout(typingTimer);
+  currentQuoteIndex = newIdx;
+  typeWriter(LIST_UCAPAN[newIdx]);
 };
 
-document.body.addEventListener('click',()=>{ if(music.paused) music.play().catch(()=>{}); },{once:false});
-
-nameInput.addEventListener('input',()=>sign.textContent=nameInput.value);
+nameInput.addEventListener('input',()=>signEl.textContent=nameInput.value);
 
 photoInput.addEventListener('change',e=>{
   const f=e.target.files[0]; if(!f)return;
-  const r=new FileReader(); r.onload=v=>photoPreview.src=v.target.result; r.readAsDataURL(f);
+  const r=new FileReader(); r.onload=v=>document.getElementById('photoPreview').src=v.target.result; r.readAsDataURL(f);
 });
 
-document.getElementById('shareBtn').onclick=()=>{
-  const v=nameInput.value.trim(); 
-  if(!v){alert('Isi nama dulu');return}
-  const url=`${location.origin}${location.pathname}?name=${encodeURIComponent(v)}&v=${currentQuoteIndex}`;
+// Event: Bagikan
+shareBtn.onclick=()=>{
+  const nameVal = nameInput.value.trim(); 
+  if(!nameVal){alert('Silakan isi nama pengirim terlebih dahulu');return}
+  const url=`${location.origin}${location.pathname}?name=${encodeURIComponent(nameVal)}&v=${currentQuoteIndex}`;
+  
   if(navigator.share){
-    navigator.share({title:'Tahun Baru 2026', text:`Ucapan dari ${v}`, url}).catch(()=>{});
+    navigator.share({title: 'Kartu Ucapan Digital 2026', text: `Dari ${nameVal} untuk Anda ✨`, url: url});
   } else {
-    navigator.clipboard?.writeText(url).then(()=>alert('Link disalin ke clipboard!'));
+    navigator.clipboard?.writeText(url).then(()=>alert('Link kartu telah disalin! Silakan kirim ke WhatsApp.'));
   }
 };
 </script>
